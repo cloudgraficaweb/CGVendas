@@ -13,8 +13,13 @@
     <div class="container">
         <img src="https://drive.google.com/uc?export=view&id=1u80eFLAcBoNHQoSST0r8Rn6KteLijsKE" alt="Imagem Futurista" width="500">
         <p class="description">CG Vendas e PDV - Sistema de vendas e gerenciamento de Lojas</p>
-        <a href="https://github.com/cloudgraficaweb/CGVendas/releases/download/1.5/Instalar.CG.Vendas.PDV.1.5.exe" class="download-button">Baixar Última Versão</a>
+        <button id="downloadButton" class="download-button">Baixar Última Versão</button>
     </div>
-    <script src="script.js"></script>
+    <script>
+        // JavaScript para redirecionar para o link de download quando o botão é clicado
+        document.getElementById("downloadButton").addEventListener("click", function() {
+            window.location.href = "https://github.com/cloudgraficaweb/CGVendas/releases/download/1.5/Instalar.CG.Vendas.PDV.1.5.exe";
+        });
+    </script>
 </body>
 </html>
