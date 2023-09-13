@@ -94,39 +94,3 @@ p.description {
     height: 50px;
     margin-bottom: 10px;
 }
-/* Estilo para a seção de mudanças da versão */
-.changelog {
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    text-align: left;
-    border-radius: 10px;
-    margin-top: 30px; /* Espaço entre esta seção e a anterior */
-    box-shadow: 0 0 10px rgba(255, 223, 0, 0.5);
-}
-
-/* Estilo para o título das mudanças da versão */
-.changelog h2 {
-    font-size: 18px;
-    color: #ffd700;
-    margin-bottom: 10px;
-}
-
-/* Estilo para o texto das mudanças da versão */
-.changelog p {
-    font-size: 14px;
-    color: #ffd700;
-    margin-bottom: 10px;
-}
-
-/* Estilo para a lista de alterações */
-.changelog ul {
-    list-style-type: disc;
-    padding-left: 20px;
-}
-
-/* Estilo para os itens da lista */
-.changelog li {
-    font-size: 12px;
-    color: #ffd700;
-    margin-bottom: 5px;
-}
