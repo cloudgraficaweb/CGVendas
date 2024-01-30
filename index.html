@@ -3,27 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CG Vendas e PDV Atualizado</title>
     <link rel="stylesheet" href="styles.css">
-
-    <!-- Metatag Open Graph para a imagem -->
-    <meta property="og:image" content="https://drive.google.com/uc?export=view&id=1u80eFLAcBoNHQoSST0r8Rn6KteLijsKE">
+    <title>Cloud Vendas</title>
 </head>
 <body>
-    <div class="top-menu">
-        <a href="https://cloudgraficaweb.github.io/CGVendas/premium.html" class="premium-button">Premium</a>
-    </div>
     <div class="container">
-        <img src="https://drive.google.com/uc?export=view&id=1u80eFLAcBoNHQoSST0r8Rn6KteLijsKE" alt="Imagem Futurista" width="500">
-        <p class="description">CG Vendas e PDV - Vendas e gerenciamento de Lojas</p>
-        <p class="description"> </p>
-        <button id="downloadButton" class="download-button">CG Vendas e PDV Atualizado</button>
+        <div class="menu">
+            <button>Inicio</button>
+            <button>Cadastros</button>
+            <button>Relatórios</button>
+            <button style="visibility: hidden;"></button> <!-- Botão invisível para manter o espaço -->
+            <button style="visibility: hidden;"></button> <!-- Botão invisível para manter o espaço -->
+            <button style="visibility: hidden;"></button> <!-- Botão invisível para manter o espaço -->
+            <button>Premium</button>
+            <button>Configurar</button>
+        </div>
+        <div class="line"></div>
+        <div class="content">
+            <div class="box">
+                <button class="wide-button" style="background-image: url('Resources/Menu1.png')">
+                    <span>Nova Venda</span>
+                </button>
+                <button class="wide-button" style="background-image: url('Resources/Menu2.png')">
+                    <span>Nova Despesa</span>
+                </button>
+                <button class="wide-button" style="background-image: url('Resources/Menu3.png')">
+                    <span>Orçamentos</span>
+                </button>
+                <button class="wide-button" style="background-image: url('Resources/Menu4.png')">
+                    <span>Pedidos</span>
+                </button>
+            </div>
+            <p>Exibir e Gerar</p>
+            <div class="box">
+                <button class="wide-button" style="background-image: url('Resources/Menu5.png')">
+                    <span>Histórico</span>
+                </button>
+                <button class="wide-button" style="background-image: url('Resources/Menu6.png')">
+                    <span>Recibos</span>
+                </button>
+                <button class="wide-button" style="background-image: url('Resources/Menu7.png')">
+                    <span>Em Aberto</span>
+                </button>
+<button style="visibility: hidden;"></button> <!-- Botão invisível para manter o espaço -->
+<button style="visibility: hidden;"></button> <!-- Botão invisível para manter o espaço -->
+<button style="visibility: hidden;"></button> <!-- Botão invisível para manter o espaço -->
+            </div>
+        </div>
     </div>
-    <script>
-        // JavaScript para redirecionar para o link de download quando o botão é clicado
-        document.getElementById("downloadButton").addEventListener("click", function() {
-            window.location.href = "https://cloudvendas.my.canva.site/";
-        });
-    </script>
 </body>
 </html>
