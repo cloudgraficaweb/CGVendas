@@ -1,0 +1,180 @@
+<html><head><base href="https://websim.ai" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudApp Updater - Dark Theme</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #1a1a1a;
+    }
+    .container {
+      background-color: #2a2a2a;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(255,0,0,0.2);
+      border: 1px solid #ff3333;
+    }
+    pre {
+      background-color: #000;
+      border: 1px solid #ff3333;
+      border-radius: 4px;
+      padding: 15px;
+      overflow-x: auto;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #f0f0f0;
+      position: relative;
+    }
+    pre code {
+      display: block;
+      counter-reset: line;
+    }
+    pre code > span {
+      display: block;
+      line-height: 1.5rem;
+      padding-left: 4em;
+    }
+    pre code > span:before {
+      counter-increment: line;
+      content: counter(line);
+      display: inline-block;
+      border-right: 1px solid #ddd;
+      padding: 0 .5em;
+      margin-right: .5em;
+      color: #888;
+      width: 2.5em;
+      position: absolute;
+      left: 0;
+    }
+    h1 {
+      color: #ff3333;
+      border-bottom: 2px solid #ff3333;
+      padding-bottom: 10px;
+    }
+    p {
+      margin-bottom: 15px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>CloudApp Updater</h1>
+    <p>Este é o script de atualização para o CloudApp. Ele realiza as seguintes ações:</p>
+    <ul>
+      <li>Verifica se o CloudApp está em execução e tenta fechá-lo</li>
+      <li>Baixa a última versão do CloudApp</li>
+      <li>Extrai os arquivos atualizados</li>
+      <li>Inicia a nova versão do CloudApp</li>
+    </ul>
+    <p>Aqui está o código do script:</p>
+    <pre><code><span>@echo off</span>
+<span>chcp 65001 > nul</span>
+<span>setlocal EnableDelayedExpansion</span>
+<span></span>
+<span>REM Diretório de atualização</span>
+<span>set "url=https://github.com/cloudgraficaweb/CGVendas/releases/download/atual/CloudApp.zip"</span>
+<span>set "updateDirectory=%~dp0"</span>
+<span>set "zipFileName=CloudApp.zip"</span>
+<span>set "programaPrincipal=%updateDirectory%CloudApp.exe"</span>
+<span></span>
+<span>:check_program</span>
+<span>REM Verifica se o programa está em execução</span>
+<span>tasklist /FI "IMAGENAME eq CloudApp.exe" 2>NUL | find /I /N "CloudApp.exe">NUL</span>
+<span>if "%ERRORLEVEL%"=="0" (</span>
+<span>    echo O programa CloudApp.exe está em execução.</span>
+<span>    echo Tentando fechar o programa...</span>
+<span>    taskkill /F /IM CloudApp.exe >nul 2>&1</span>
+<span>    </span>
+<span>    REM Aguarda um momento e verifica novamente</span>
+<span>    timeout /t 2 >nul</span>
+<span>    tasklist /FI "IMAGENAME eq CloudApp.exe" 2>NUL | find /I /N "CloudApp.exe">NUL</span>
+<span>    if "!ERRORLEVEL!"=="0" (</span>
+<span>        cls</span>
+<span>        echo.</span>
+<span>        echo ****************************************************</span>
+<span>        echo *                                                  *</span>
+<span>        echo *        FECHE O PROGRAMA PARA ATUALIZAR           *</span>
+<span>        echo *                                                  *</span>
+<span>        echo * Pressione qualquer tecla quando fechar o programa*</span>
+<span>        echo *    ou feche esta janela para cancelar            *</span>
+<span>        echo *                                                  *</span>
+<span>        echo ****************************************************</span>
+<span>        echo.</span>
+<span>        pause >nul</span>
+<span>        goto check_program</span>
+<span>    )</span>
+<span>)</span>
+<span></span>
+<span>REM Realiza o download do arquivo zip</span>
+<span>echo Baixando Nova Atualização...</span>
+<span>powershell -command "& { Invoke-WebRequest '%url%' -OutFile '%updateDirectory%%zipFileName%' }"</span>
+<span>if !ERRORLEVEL! neq 0 (</span>
+<span>    echo Erro ao baixar a atualização.</span>
+<span>    pause</span>
+<span>    exit /b 1</span>
+<span>)</span>
+<span>echo Download concluído.</span>
+<span></span>
+<span>REM Verifica novamente se o programa está em execução antes de extrair</span>
+<span>:check_program_again</span>
+<span>tasklist /FI "IMAGENAME eq CloudApp.exe" 2>NUL | find /I /N "CloudApp.exe">NUL</span>
+<span>if "%ERRORLEVEL%"=="0" (</span>
+<span>    echo O programa CloudApp.exe está em execução.</span>
+<span>    echo Tentando fechar o programa...</span>
+<span>    taskkill /F /IM CloudApp.exe >nul 2>&1</span>
+<span>    </span>
+<span>    REM Aguarda um momento e verifica novamente</span>
+<span>    timeout /t 2 >nul</span>
+<span>    tasklist /FI "IMAGENAME eq CloudApp.exe" 2>NUL | find /I /N "CloudApp.exe">NUL</span>
+<span>    if "!ERRORLEVEL!"=="0" (</span>
+<span>        cls</span>
+<span>        echo.</span>
+<span>        echo ****************************************************</span>
+<span>        echo *                                                  *</span>
+<span>        echo *        FECHE O PROGRAMA PARA ATUALIZAR           *</span>
+<span>        echo *                                                  *</span>
+<span>        echo * Pressione qualquer tecla quando fechar o programa*</span>
+<span>        echo *    ou feche esta janela para cancelar            *</span>
+<span>        echo *                                                  *</span>
+<span>        echo ****************************************************</span>
+<span>        echo.</span>
+<span>        pause >nul</span>
+<span>        goto check_program_again</span>
+<span>    )</span>
+<span>)</span>
+<span></span>
+<span>REM Extrai o conteúdo do arquivo zip</span>
+<span>echo Extraindo arquivos...</span>
+<span>powershell -command "& { Expand-Archive -Path '%updateDirectory%%zipFileName%' -DestinationPath '%updateDirectory%' -Force }"</span>
+<span>if !ERRORLEVEL! neq 0 (</span>
+<span>    echo Erro ao extrair os arquivos.</span>
+<span>    pause</span>
+<span>    exit /b 1</span>
+<span>)</span>
+<span>echo Extração concluída.</span>
+<span></span>
+<span>REM Verifica se o programa principal existe após a extração</span>
+<span>if exist "%programaPrincipal%" (</span>
+<span>    echo Programa principal encontrado. Iniciando a aplicação.</span>
+<span>    start "" "%programaPrincipal%"</span>
+<span>    echo Aplicação iniciada.</span>
+<span>    exit /b 0</span>
+<span>) else (</span>
+<span>    echo ERRO: Arquivo do programa principal não encontrado após a atualização.</span>
+<span>    pause</span>
+<span>    exit /b 1</span>
+<span>)</span></code></pre>
+    <p>Este script é projetado para garantir uma atualização suave do CloudApp, lidando com possíveis conflitos e proporcionando feedback ao usuário durante o processo.</p>
+  </div>
+</body></html>
