@@ -1,55 +1,123 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Cloud Vendas</title>
-</head>
-<body>
-    <div class="container">
-        <div class="menu">
-            <button>Inicio</button>
-            <button>Cadastros</button>
-            <button>Relatórios</button>
-            <button style="visibility: hidden;"></button> <!-- Botão invisível para manter o espaço -->
-            <button style="visibility: hidden;"></button> <!-- Botão invisível para manter o espaço -->
-            <button style="visibility: hidden;"></button> <!-- Botão invisível para manter o espaço -->
-            <button>Premium</button>
-            <button>Configurar</button>
-        </div>
-        <div class="line"></div>
-        <div class="content">
-            <div class="box">
-                <button class="wide-button" style="background-image: url('Resources/Menu1.png')">
-                    <span>Nova Venda</span>
-                </button>
-                <button class="wide-button" style="background-image: url('Resources/Menu2.png')">
-                    <span>Nova Despesa</span>
-                </button>
-                <button class="wide-button" style="background-image: url('Resources/Menu3.png')">
-                    <span>Orçamentos</span>
-                </button>
-                <button class="wide-button" style="background-image: url('Resources/Menu4.png')">
-                    <span>Pedidos</span>
-                </button>
-            </div>
-            <p>Exibir e Gerar</p>
-            <div class="box">
-                <button class="wide-button" style="background-image: url('Resources/Menu5.png')">
-                    <span>Histórico</span>
-                </button>
-                <button class="wide-button" style="background-image: url('Resources/Menu6.png')">
-                    <span>Recibos</span>
-                </button>
-                <button class="wide-button" style="background-image: url('Resources/Menu7.png')">
-                    <span>Em Aberto</span>
-                </button>
-<button style="visibility: hidden;"></button> <!-- Botão invisível para manter o espaço -->
-<button style="visibility: hidden;"></button> <!-- Botão invisível para manter o espaço -->
-<button style="visibility: hidden;"></button> <!-- Botão invisível para manter o espaço -->
-            </div>
-        </div>
+<html><head><base href="https://dashboard.cloudapp.ai"><title>Dashboard CloudApp</title><style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a2e;
+    color: #ffffff;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #16213e;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .menu {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .menu-item {
+    cursor: pointer;
+  }
+  
+  .user-menu {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .user-menu-item {
+    cursor: pointer;
+  }
+  
+  .dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .dashboard-item {
+    background-color: #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    color: #ffffff;
+  }
+  
+  .dashboard-item:hover {
+    background-color: #16213e;
+  }
+  
+  .dashboard-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+  
+  .dashboard-text {
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+</style></head><body>
+  <div class="header">
+    <div class="logo">CloudApp</div>
+    <div class="menu">
+      <div class="menu-item">Início</div>
+      <div class="menu-item">Cadastros</div>
+      <div class="menu-item">Estatísticas</div>
     </div>
-</body>
-</html>
+    <div class="user-menu">
+      <div class="user-menu-item">PDV 50%</div>
+      <div class="user-menu-item">Zap</div>
+      <div class="user-menu-item">Premium</div>
+      <div class="user-menu-item">Configurar</div>
+    </div>
+  </div>
+  
+  <div class="dashboard">
+    <a href="https://cloudgrafica.blogspot.com/p/cloudapp.html" class="dashboard-item">
+      <div class="dashboard-icon">🛒</div>
+      <div class="dashboard-text">Nova Venda</div>
+    </a>
+    <a href="https://cloudgrafica.blogspot.com/p/cloudapp.html" class="dashboard-item">
+      <div class="dashboard-icon">💸</div>
+      <div class="dashboard-text">Nova Despesa</div>
+    </a>
+    <a href="https://cloudgrafica.blogspot.com/p/cloudapp.html" class="dashboard-item">
+      <div class="dashboard-icon">📊</div>
+      <div class="dashboard-text">Orçamento</div>
+    </a>
+    <a href="https://cloudgrafica.blogspot.com/p/cloudapp.html" class="dashboard-item">
+      <div class="dashboard-icon">📋</div>
+      <div class="dashboard-text">Pedidos</div>
+    </a>
+    <a href="https://cloudgrafica.blogspot.com/p/cloudapp.html" class="dashboard-item">
+      <div class="dashboard-icon">🕰️</div>
+      <div class="dashboard-text">Histórico | Vendas</div>
+    </a>
+    <a href="https://cloudgrafica.blogspot.com/p/cloudapp.html" class="dashboard-item">
+      <div class="dashboard-icon">⏱️</div>
+      <div class="dashboard-text">Gerenciar Despesas</div>
+    </a>
+    <a href="https://cloudgrafica.blogspot.com/p/cloudapp.html" class="dashboard-item">
+      <div class="dashboard-icon">🧾</div>
+      <div class="dashboard-text">Recibos</div>
+    </a>
+    <a href="https://cloudgrafica.blogspot.com/p/cloudapp.html" class="dashboard-item">
+      <div class="dashboard-icon">💰</div>
+      <div class="dashboard-text">Em Aberto</div>
+    </a>
+  </div>
+</body></html>
