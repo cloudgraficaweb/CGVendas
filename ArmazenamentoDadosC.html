@@ -1,0 +1,304 @@
+<html><head><base href="https://websim.creation.engine/csharp-storage-methods/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Métodos de Armazenamento em C# para Jovens Programadores</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f8ff;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+    }
+    h1, h2 {
+        color: #4169e1;
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .example, .exercise {
+        background-color: #e6f3ff;
+        border-left: 5px solid #4169e1;
+        padding: 10px;
+        margin: 10px 0;
+    }
+    .btn {
+        background-color: #4169e1;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+    .btn:hover {
+        background-color: #1e90ff;
+    }
+    #progress {
+        width: 0%;
+        height: 5px;
+        background-color: #4169e1;
+        transition: width 0.5s;
+    }
+    pre, code {
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #f4f4f4;
+        padding: 5px;
+        border-radius: 3px;
+    }
+    textarea {
+        width: 100%;
+        height: 150px;
+        padding: 10px;
+        margin: 10px 0;
+        font-family: 'Courier New', Courier, monospace;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        resize: vertical;
+    }
+    .result {
+        background-color: #e8f5e9;
+        border: 1px solid #81c784;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+    }
+    .error {
+        background-color: #ffebee;
+        border: 1px solid #ef9a9a;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div id="progress"></div>
+    <h1>Armazenamento de Dados em C# para Jovens Programadores! 🚀</h1>
+    
+    <div id="content">
+        <section id="intro">
+            <h2>Introdução</h2>
+            <p>Olá, jovem programador! 👋 Você está pronto para uma aventura no mundo do armazenamento de dados em C#? Vamos aprender diferentes formas de guardar informações, como se fossem tesouros digitais em uma mochila mágica! 🎒✨</p>
+            <button class="btn" onclick="nextSection()">Vamos começar!</button>
+        </section>
+
+        <section id="variables" style="display:none;">
+            <h2>1. Variáveis: Caixinhas Mágicas</h2>
+            <p>Variáveis são como caixinhas mágicas onde podemos guardar informações temporariamente enquanto nosso programa está rodando.</p>
+            <div class="example">
+                <p>Exemplo:</p>
+                <pre>
+string nomeDoHeroi = "Super Coder";
+int idade = 15;
+bool gostaDeProgramar = true;
+                </pre>
+            </div>
+            <p>Mas lembre-se, quando o programa termina, puf! 💨 As informações nas variáveis desaparecem.</p>
+            <div class="exercise">
+                <h3>Exercício: Declare suas próprias variáveis!</h3>
+                <p>Crie três variáveis: uma string para seu animal favorito, um int para suas horas de programação por dia, e um bool se você gosta de pizza. Use o formato do exemplo acima.</p>
+                <textarea id="variablesExercise" placeholder="Digite seu código aqui..."></textarea>
+                <button class="btn" onclick="checkVariables()">Verificar</button>
+                <div id="variableResult" class="result" style="display:none;"></div>
+            </div>
+            <button class="btn" onclick="nextSection()">Próximo método!</button>
+        </section>
+
+        <section id="files" style="display:none;">
+            <h2>2. Arquivos: Cadernos Digitais</h2>
+            <p>Arquivos são como cadernos digitais onde podemos escrever informações que queremos guardar mesmo depois que o programa termina.</p>
+            <div class="example">
+                <p>Exemplo:</p>
+                <pre>
+// Salvando em um arquivo
+File.WriteAllText("meudiario.txt", "Hoje eu aprendi sobre armazenamento em C#!");
+
+// Lendo de um arquivo
+string conteudo = File.ReadAllText("meudiario.txt");
+Console.WriteLine(conteudo);
+                </pre>
+            </div>
+            <div class="exercise">
+                <h3>Exercício: Escreva código para salvar e ler de um arquivo</h3>
+                <p>Escreva código para salvar seu nome em um arquivo chamado "perfil.txt" e depois leia o conteúdo deste arquivo. Use o formato do exemplo acima.</p>
+                <textarea id="filesExercise" placeholder="Digite seu código aqui..."></textarea>
+                <button class="btn" onclick="checkFiles()">Verificar</button>
+                <div id="fileResult" class="result" style="display:none;"></div>
+            </div>
+            <button class="btn" onclick="nextSection()">Vamos para o próximo!</button>
+        </section>
+
+        <section id="databases" style="display:none;">
+            <h2>3. Bancos de Dados: Bibliotecas Organizadas</h2>
+            <p>Bancos de dados são como grandes bibliotecas super organizadas. Eles são perfeitos para guardar muitas informações de forma estruturada.</p>
+            <div class="example">
+                <p>Exemplo (usando uma lista para simular um banco de dados simples):</p>
+                <pre>
+// Criando uma lista para simular um banco de dados de livros
+List&lt;Dictionary&lt;string, string&gt;&gt; livros = new List&lt;Dictionary&lt;string, string&gt;&gt;();
+
+// Adicionando um livro
+livros.Add(new Dictionary&lt;string, string&gt; {
+    {"Titulo", "C# é Divertido"},
+    {"Autor", "João Programador"}
+});
+
+// Lendo os livros
+foreach (var livro in livros) {
+    Console.WriteLine($"Título: {livro["Titulo"]}, Autor: {livro["Autor"]}");
+}
+                </pre>
+            </div>
+            <div class="exercise">
+                <h3>Exercício: Crie uma lista de livros e adicione dois livros</h3>
+                <p>Use o exemplo acima como base para criar uma lista de livros e adicionar dois livros diferentes. Depois, faça um loop para imprimir os livros.</p>
+                <textarea id="databaseExercise" placeholder="Digite seu código aqui..."></textarea>
+                <button class="btn" onclick="checkDatabase()">Verificar</button>
+                <div id="dbResult" class="result" style="display:none;"></div>
+            </div>
+            <button class="btn" onclick="nextSection()">Último método!</button>
+        </section>
+
+        <section id="serialization" style="display:none;">
+            <h2>4. Serialização: Congelando Objetos</h2>
+            <p>Serialização é como congelar um objeto para guardá-lo e depois descongelá-lo quando precisarmos usar novamente. É muito útil para salvar objetos complexos.</p>
+            <div class="example">
+                <p>Exemplo:</p>
+                <pre>
+using System.Text.Json;
+
+public class Heroi {
+    public string Nome { get; set; }
+    public int Idade { get; set; }
+    public string Poder { get; set; }
+}
+
+// Criando e serializando um herói
+Heroi meuHeroi = new Heroi { Nome = "Super Coder", Idade = 15, Poder = "Programação Rápida" };
+string heroiJson = JsonSerializer.Serialize(meuHeroi);
+Console.WriteLine(heroiJson);
+
+// Desserializando o herói
+Heroi heroiDescongelado = JsonSerializer.Deserialize&lt;Heroi&gt;(heroiJson);
+Console.WriteLine($"Nome: {heroiDescongelado.Nome}, Idade: {heroiDescongelado.Idade}, Poder: {heroiDescongelado.Poder}");
+                </pre>
+            </div>
+            <div class="exercise">
+                <h3>Exercício: Crie uma classe Jogo, serialize e desserialize um objeto dessa classe</h3>
+                <p>Crie uma classe Jogo com propriedades Nome, Genero e AnoLancamento. Crie um objeto dessa classe, serialize-o e depois desserialize-o. Imprima os dados do objeto desserializado.</p>
+                <textarea id="serializationExercise" placeholder="Digite seu código aqui..."></textarea>
+                <button class="btn" onclick="checkSerialization()">Verificar</button>
+                <div id="serializeResult" class="result" style="display:none;"></div>
+            </div>
+            <button class="btn" onclick="showConclusion()">Concluir!</button>
+        </section>
+
+        <section id="conclusion" style="display:none;">
+            <h2>Conclusão</h2>
+            <p>Parabéns! 🎉 Você aprendeu sobre diferentes métodos de armazenamento em C#:</p>
+            <ul>
+                <li>Variáveis para armazenamento temporário</li>
+                <li>Arquivos para dados persistentes simples</li>
+                <li>Bancos de dados para grandes quantidades de dados estruturados</li>
+                <li>Serialização para objetos complexos</li>
+            </ul>
+            <p>Cada método tem suas vantagens e é útil em diferentes situações. Continue praticando e experimentando para se tornar um mestre do armazenamento de dados! 💾🚀</p>
+            <button class="btn" onclick="location.reload()">Recomeçar o tutorial</button>
+        </section>
+    </div>
+</div>
+
+<script>
+let sections = ['intro', 'variables', 'files', 'databases', 'serialization', 'conclusion'];
+let currentSection = 0;
+
+function nextSection() {
+    document.getElementById(sections[currentSection]).style.display = 'none';
+    currentSection++;
+    document.getElementById(sections[currentSection]).style.display = 'block';
+    updateProgress();
+}
+
+function showConclusion() {
+    document.getElementById(sections[currentSection]).style.display = 'none';
+    currentSection = sections.length - 1;
+    document.getElementById('conclusion').style.display = 'block';
+    updateProgress();
+}
+
+function updateProgress() {
+    let progress = (currentSection / (sections.length - 1)) * 100;
+    document.getElementById('progress').style.width = progress + '%';
+}
+
+function checkVariables() {
+    let code = document.getElementById('variablesExercise').value;
+    let result = document.getElementById('variableResult');
+    
+    if (code.includes('string') && code.includes('int') && code.includes('bool') &&
+        code.includes('=') && code.includes(';')) {
+        result.innerHTML = "Ótimo trabalho! Você declarou corretamente as variáveis.";
+        result.className = 'result';
+    } else {
+        result.innerHTML = "Algo está faltando. Certifique-se de declarar uma string, um int e um bool, e use '=' para atribuir valores. Não se esqueça do ';' no final de cada linha!";
+        result.className = 'error';
+    }
+    result.style.display = 'block';
+}
+
+function checkFiles() {
+    let code = document.getElementById('filesExercise').value;
+    let result = document.getElementById('fileResult');
+    
+    if (code.includes('File.WriteAllText') && code.includes('File.ReadAllText') &&
+        code.includes('perfil.txt') && code.includes('Console.WriteLine')) {
+        result.innerHTML = "Excelente! Você escreveu e leu corretamente de um arquivo.";
+        result.className = 'result';
+    } else {
+        result.innerHTML = "Algo está faltando. Certifique-se de usar File.WriteAllText para escrever, File.ReadAllText para ler, e Console.WriteLine para imprimir o conteúdo.";
+        result.className = 'error';
+    }
+    result.style.display = 'block';
+}
+
+function checkDatabase() {
+    let code = document.getElementById('databaseExercise').value;
+    let result = document.getElementById('dbResult');
+    
+    if (code.includes('List<Dictionary<string, string>>') && 
+        code.includes('Add') && code.includes('foreach') &&
+        (code.match(/Add/g) || []).length >= 2) {
+        result.innerHTML = "Ótimo trabalho! Você criou uma lista, adicionou dois livros e os imprimiu corretamente.";
+        result.className = 'result';
+    } else {
+        result.innerHTML = "Algo está faltando. Certifique-se de criar uma List<Dictionary<string, string>>, adicionar dois livros com Add, e usar foreach para imprimir os livros.";
+        result.className = 'error';
+    }
+    result.style.display = 'block';
+}
+
+function checkSerialization() {
+    let code = document.getElementById('serializationExercise').value;
+    let result = document.getElementById('serializeResult');
+    
+    if (code.includes('class Jogo') && code.includes('JsonSerializer.Serialize') &&
+        code.includes('JsonSerializer.Deserialize') && code.includes('Console.WriteLine')) {
+        result.innerHTML = "Excelente! Você criou a classe Jogo, serializou e desserializou corretamente.";
+        result.className = 'result';
+    } else {
+        result.innerHTML = "Algo está faltando. Certifique-se de criar a classe Jogo, usar JsonSerializer.Serialize para serializar, JsonSerializer.Deserialize para desserializar, e Console.WriteLine para imprimir os dados.";
+        result.className = 'error';
+    }
+    result.style.display = 'block';
+}
+</script>
+</body>
+</html>
