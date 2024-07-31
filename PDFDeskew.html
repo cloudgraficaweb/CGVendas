@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor PDF Avançado - Deskew/Despeckle</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        #fileInput {
+            display: none;
+        }
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        #downloadBtn {
+            display: none;
+        }
+        #progress {
+            width: 100%;
+            background-color: #ddd;
+            margin-top: 20px;
+        }
+        #progressBar {
+            width: 0%;
+            height: 30px;
+            background-color: #4CAF50;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+        }
+        #statusText {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Desentortar PDF Deskew - Cloud</h1>
+        <input type="file" id="fileInput" accept=".pdf" />
+        <label for="fileInput" class="button">Escolher PDF</label>
+        <button id="processBtn" class="button" style="display: none;">Processar PDF</button>
+        <div id="progress" style="display: none;">
+            <div id="progressBar">0%</div>
+        </div>
+        <div id="statusText">Carregando OpenCV...</div>
+        <a id="downloadBtn" class="button" download="processed.pdf">Baixar PDF Processado</a>
+    </div>
+
+    <script>
+        // Configuração do PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js';
+
+        const fileInput = document.getElementById('fileInput');
+        const processBtn = document.getElementById('processBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progress = document.getElementById('progress');
+        const statusText = document.getElementById('statusText');
+
+        let pdfFile = null;
+        let openCvLoaded = false;
+
+        // Carregar OpenCV
+        function loadOpenCV(onloadCallback) {
+            let script = document.createElement('script');
+            script.setAttribute('async', '');
+            script.setAttribute('type', 'text/javascript');
+            script.addEventListener('load', () => {
+                if (cv.getBuildInformation) {
+                    console.log(cv.getBuildInformation());
+                    onloadCallback();
+                } else {
+                    // WASM
+                    cv['onRuntimeInitialized'] = () => {
+                        console.log(cv.getBuildInformation());
+                        onloadCallback();
+                    }
+                }
+            });
+            script.addEventListener('error', () => {
+                statusText.textContent = 'Falha ao carregar OpenCV. Por favor, recarregue a página.';
+            });
+            script.src = 'https://docs.opencv.org/4.5.2/opencv.js';
+            let node = document.getElementsByTagName('script')[0];
+            node.parentNode.insertBefore(script, node);
+        }
+
+        // Iniciar carregamento do OpenCV com timeout
+        loadOpenCV(() => {
+            openCvLoaded = true;
+            statusText.textContent = 'OpenCV carregado. Pronto para processar PDFs.';
+            if (pdfFile) {
+                processBtn.style.display = 'inline-block';
+                statusText.textContent = 'PDF selecionado. Clique em "Processar PDF" para começar.';
+            }
+        });
+
+        // Timeout para o carregamento do OpenCV
+        setTimeout(() => {
+            if (!openCvLoaded) {
+                statusText.textContent = 'Tempo excedido ao carregar OpenCV. Por favor, recarregue a página.';
+            }
+        }, 30000);  // 30 segundos de timeout
+
+        fileInput.addEventListener('change', (e) => {
+            pdfFile = e.target.files[0];
+            if (pdfFile && openCvLoaded) {
+                processBtn.style.display = 'inline-block';
+                statusText.textContent = 'PDF selecionado. Clique em "Processar PDF" para começar.';
+            } else if (pdfFile) {
+                statusText.textContent = 'PDF selecionado. Aguardando carregamento do OpenCV...';
+            }
+        });
+
+        processBtn.addEventListener('click', async () => {
+            if (!pdfFile || !openCvLoaded) return;
+
+            progress.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressBar.textContent = '0%';
+            statusText.textContent = 'Iniciando processamento...';
+
+            try {
+                const arrayBuffer = await pdfFile.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                const totalPages = pdf.numPages;
+
+                const processedPages = [];
+
+                for (let i = 1; i <= totalPages; i++) {
+                    statusText.textContent = `Processando página ${i} de ${totalPages}...`;
+                    const processedPage = await processPage(pdf, i);
+                    processedPages.push(processedPage);
+                    updateProgress(i, totalPages);
+                }
+
+                statusText.textContent = 'Gerando PDF final...';
+                const processedPdf = await generatePDF(processedPages);
+                
+                downloadBtn.style.display = 'inline-block';
+                downloadBtn.href = URL.createObjectURL(processedPdf);
+                statusText.textContent = 'Processamento concluído! Você pode baixar o PDF processado agora.';
+            } catch (error) {
+                console.error('Erro ao processar o PDF:', error);
+                statusText.textContent = 'Ocorreu um erro ao processar o PDF. Por favor, tente novamente.';
+            }
+        });
+
+        async function processPage(pdf, pageNumber) {
+            const page = await pdf.getPage(pageNumber);
+            const scale = 1.5;
+            const viewport = page.getViewport({ scale });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            await page.render({ canvasContext: context, viewport }).promise;
+
+            let src = cv.imread(canvas);
+            let dst = new cv.Mat();
+
+            // Deskew
+            let lines = new cv.Mat();
+            cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY);
+            cv.Canny(src, dst, 50, 200, 3);
+            cv.HoughLines(dst, lines, 1, Math.PI / 180, 150, 0, 0, 0, Math.PI);
+            
+            let angle = 0;
+            for (let i = 0; i < lines.rows; ++i) {
+                let rho = lines.data32F[i * 2];
+                let theta = lines.data32F[i * 2 + 1];
+                angle += theta;
+            }
+            angle /= lines.rows;
+            angle = angle * 180 / Math.PI - 90;
+            
+            let center = new cv.Point(src.cols / 2, src.rows / 2);
+            let rotMat = cv.getRotationMatrix2D(center, angle, 1);
+            cv.warpAffine(src, dst, rotMat, src.size(), cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
+
+            // Despeckle (using median blur as a simple despeckling method)
+            cv.medianBlur(dst, dst, 5);
+
+            cv.imshow(canvas, dst);
+
+            src.delete(); dst.delete(); lines.delete(); rotMat.delete();
+
+            return canvas.toDataURL('image/jpeg');
+        }
+
+        async function generatePDF(images) {
+            const pdf = new jspdf.jsPDF();
+
+            images.forEach((image, index) => {
+                if (index > 0) pdf.addPage();
+                pdf.addImage(image, 'JPEG', 0, 0, 210, 297); // A4 size
+            });
+
+            return pdf.output('blob');
+        }
+
+        function updateProgress(current, total) {
+            const percent = Math.round((current / total) * 100);
+            progressBar.style.width = percent + '%';
+            progressBar.textContent = percent + '%';
+        }
+    </script>
+</body>
+</html>
