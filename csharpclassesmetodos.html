@@ -1,0 +1,315 @@
+<html><head><base href="https://websim.creation.engine/csharp-lesson/" target="_blank"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Aula Interativa de C#</title><style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+    }
+    .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+    h1, h2, h3 {
+        color: #0066cc;
+    }
+    .tabs {
+        display: flex;
+        border-bottom: 2px solid #0066cc;
+        margin-bottom: 20px;
+    }
+    .tab-button {
+        background-color: #e6f2ff;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 20px;
+        transition: background-color 0.3s;
+        font-size: 16px;
+        font-weight: bold;
+        color: #0066cc;
+        border-radius: 8px 8px 0 0;
+        margin-right: 5px;
+    }
+    .tab-button:hover {
+        background-color: #cce5ff;
+    }
+    .tab-button.active {
+        background-color: #0066cc;
+        color: white;
+    }
+    .tab-content {
+        display: none;
+        padding: 20px;
+        border: 1px solid #cce5ff;
+        border-radius: 0 0 8px 8px;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    pre {
+        background-color: #f8f8f8;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        overflow-x: auto;
+    }
+    code {
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 14px;
+    }
+    .exercise {
+        background-color: #e6f7ff;
+        border: 1px solid #91d5ff;
+        border-radius: 5px;
+        padding: 15px;
+        margin-top: 20px;
+    }
+    .exercise h3 {
+        color: #0050b3;
+    }
+    .interactive-code {
+        margin-top: 20px;
+    }
+    .interactive-code textarea {
+        width: 100%;
+        height: 150px;
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 14px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    .run-button {
+        background-color: #52c41a;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+    .run-button:hover {
+        background-color: #389e0d;
+    }
+    #output {
+        background-color: #f0f0f0;
+        border: 1px solid #d9d9d9;
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 10px;
+        min-height: 50px;
+    }
+</style></head><body><div class="container"><h1>Aula Interativa de C#</h1><div class="tabs"><button class="tab-button active" onclick="openTab(event, 'classes')">Classes</button><button class="tab-button" onclick="openTab(event, 'static')">Métodos Static</button><button class="tab-button" onclick="openTab(event, 'void')">Métodos Void</button><button class="tab-button" onclick="openTab(event, 'public')">Modificador Public</button></div><div id="classes" class="tab-content active"><h2>Classes em C#</h2><p>As classes são o coração da programação orientada a objetos em C#. Elas funcionam como moldes para criar objetos, encapsulando dados (atributos) e comportamentos (métodos) relacionados em uma única unidade.</p><p>Imagine uma classe como uma receita para fazer um bolo. A receita (classe) define os ingredientes (atributos) e os passos para fazer o bolo (métodos). Cada bolo que você faz seguindo essa receita é um objeto dessa classe.</p><h3>Estrutura Básica de uma Classe</h3><pre><code>public class NomeDaClasse
+{
+    // Atributos (variáveis da classe)
+    public string Atributo1 { get; set; }
+    public int Atributo2 { get; set; }
+
+    // Método construtor
+    public NomeDaClasse(string valor1, int valor2)
+    {
+        Atributo1 = valor1;
+        Atributo2 = valor2;
+    }
+
+    // Métodos
+    public void Metodo1()
+    {
+        // Código do método
+    }
+
+    public string Metodo2()
+    {
+        // Código do método
+        return "Algum resultado";
+    }
+}</code></pre><p>Vamos ver um exemplo prático de uma classe Pessoa:</p><pre><code>public class Pessoa
+{
+    public string Nome { get; set; }
+    public int Idade { get; set; }
+
+    public Pessoa(string nome, int idade)
+    {
+        Nome = nome;
+        Idade = idade;
+    }
+
+    public void Apresentar()
+    {
+        Console.WriteLine($"Olá, meu nome é {Nome} e eu tenho {Idade} anos.");
+    }
+}</code></pre><p>Neste exemplo, <code>Pessoa</code> é uma classe com dois atributos (<code>Nome</code> e <code>Idade</code>) e um método (<code>Apresentar</code>). O construtor permite criar uma nova Pessoa fornecendo um nome e uma idade.</p><div class="exercise"><h3>Exercício Interativo: Criando uma Classe Carro</h3><p>Agora é sua vez! Vamos criar uma classe <code>Carro</code> com os atributos <code>Marca</code> e <code>Modelo</code>, e um método <code>ExibirDetalhes</code> que imprime os detalhes do carro.</p><div class="interactive-code"><textarea id="carroCode">public class Carro
+{
+    // Adicione os atributos Marca e Modelo aqui
+
+    // Crie o construtor da classe
+
+    // Implemente o método ExibirDetalhes
+}</textarea><button class="run-button" onclick="runCode('carroCode')">Executar</button><div id="output"></div></div></div></div><div id="static" class="tab-content"><h2>Métodos Static em C#</h2><p>Métodos static em C# são métodos que pertencem à classe em si, não a instâncias específicas da classe. Isso significa que você pode chamar um método static sem criar um objeto da classe.</p><p>Pense em métodos static como ferramentas utilitárias que não precisam de informações específicas de um objeto para funcionar. Eles são úteis para operações que são independentes do estado do objeto.</p><h3>Características dos Métodos Static</h3><ul><li>Pertencem à classe, não a instâncias da classe</li><li>Podem ser chamados sem criar um objeto da classe</li><li>Não podem acessar membros não-static diretamente</li><li>São úteis para operações utilitárias e funções auxiliares</li></ul><h3>Exemplo de Método Static</h3><pre><code>public class Calculadora
+{
+    public static int Somar(int a, int b)
+    {
+        return a + b;
+    }
+
+    public static int Multiplicar(int a, int b)
+    {
+        return a * b;
+    }
+}</code></pre><p>Neste exemplo, <code>Somar</code> e <code>Multiplicar</code> são métodos static. Você pode usá-los assim:</p><pre><code>int resultado1 = Calculadora.Somar(5, 3);      // resultado1 será 8
+int resultado2 = Calculadora.Multiplicar(4, 2); // resultado2 será 8</code></pre><p>Observe que não precisamos criar uma instância de <code>Calculadora</code> para usar esses métodos.</p><div class="exercise"><h3>Exercício Interativo: Criando uma Classe com Método Static</h3><p>Vamos criar uma classe <code>Matematica</code> com um método static chamado <code>Potencia</code> que calcula a potência de um número.</p><div class="interactive-code"><textarea id="matemaciaCode">public class Matematica
+{
+    // Implemente o método static Potencia aqui
+    // Ele deve receber dois parâmetros: base e expoente
+    // E retornar a base elevada ao expoente
+}</textarea><button class="run-button" onclick="runCode('matemaciaCode')">Executar</button><div id="output"></div></div></div></div><div id="void" class="tab-content"><h2>Métodos Void em C#</h2><p>Métodos void em C# são métodos que executam uma ação, mas não retornam um valor. O termo "void" significa literalmente "vazio" ou "sem valor de retorno".</p><p>Pense em métodos void como ações que você realiza sem esperar um resultado específico de volta. Por exemplo, imprimir algo na tela ou salvar dados em um arquivo são ações que não precisam retornar um valor.</p><h3>Características dos Métodos Void</h3><ul><li>Não retornam um valor</li><li>Usados para realizar ações ou operações</li><li>Não é necessário usar a palavra-chave 'return' (embora possa ser usada para sair do método prematuramente)</li><li>Ideais para métodos que modificam o estado do objeto ou realizam uma operação sem produzir um resultado</li></ul><h3>Exemplo de Método Void</h3><pre><code>public class Mensageiro
+{
+    public void EnviarMensagem(string mensagem)
+    {
+        Console.WriteLine($"Enviando mensagem: {mensagem}");
+        // Imagine que aqui teríamos código para realmente enviar a mensagem
+    }
+
+    public void LimparHistorico()
+    {
+        Console.WriteLine("Limpando o histórico de mensagens...");
+        // Aqui teríamos código para limpar o histórico
+    }
+}</code></pre><p>Neste exemplo, tanto <code>EnviarMensagem</code> quanto <code>LimparHistorico</code> são métodos void. Eles realizam ações, mas não retornam valores. Você os usaria assim:</p><pre><code>Mensageiro meuMensageiro = new Mensageiro();
+meuMensageiro.EnviarMensagem("Olá, mundo!");
+meuMensageiro.LimparHistorico();</code></pre><div class="exercise"><h3>Exercício Interativo: Criando uma Classe com Método Void</h3><p>Vamos criar uma classe <code>Animal</code> com um método void chamado <code>EmitirSom</code> que imprime o som característico do animal.</p><div class="interactive-code"><textarea id="animalCode">public class Animal
+{
+    public string Nome { get; set; }
+    public string Especie { get; set; }
+
+    public Animal(string nome, string especie)
+    {
+        Nome = nome;
+        Especie = especie;
+    }
+
+    // Implemente o método void EmitirSom aqui
+    // Ele deve imprimir uma mensagem com o som do animal
+}</textarea><button class="run-button" onclick="runCode('animalCode')">Executar</button><div id="output"></div></div></div></div><div id="public" class="tab-content"><h2>Modificador Public em C#</h2><p>O modificador <code>public</code> em C# é um modificador de acesso que define a visibilidade de tipos e membros de tipos. Quando um membro de classe (como um método ou propriedade) é declarado como public, ele pode ser acessado de qualquer lugar, tanto dentro quanto fora da classe.</p><p>Pense no modificador <code>public</code> como uma porta aberta. Qualquer um pode entrar e usar o que está lá dentro.</p><h3>Características do Modificador Public</h3><ul><li>Oferece o nível mais amplo de acesso</li><li>Membros public podem ser acessados de qualquer parte do código</li><li>Útil para interfaces e APIs que precisam ser acessíveis externamente</li><li>Deve ser usado com cuidado para manter o encapsulamento</li></ul><h3>Exemplo de Uso do Modificador Public</h3><pre><code>public class Conta
+{
+    public string Titular { get; set; }
+    public decimal Saldo { get; private set; }
+
+    public Conta(string titular, decimal saldoInicial)
+    {
+        Titular = titular;
+        Saldo = saldoInicial;
+    }
+
+    public void Depositar(decimal valor)
+    {
+        if (valor > 0)
+        {
+            Saldo += valor;
+            Console.WriteLine($"Depósito de {valor:C} realizado. Novo saldo: {Saldo:C}");
+        }
+    }
+
+    public void ExibirSaldo()
+    {
+        Console.WriteLine($"Saldo atual de {Titular}: {Saldo:C}");
+    }
+}</code></pre><p>Neste exemplo, <code>Titular</code>, <code>Depositar</code>, e <code>ExibirSaldo</code> são membros public. Eles podem ser acessados de fora da classe:</p><pre><code>Conta minhaConta = new Conta("João", 1000);
+minhaConta.Depositar(500);
+minhaConta.ExibirSaldo();
+Console.WriteLine($"Titular da conta: {minhaConta.Titular}");</code></pre><p>Note que <code>Saldo</code> tem um getter public, mas um setter private, o que significa que pode ser lido de fora da classe, mas só pode ser modificado dentro da classe.</p><div class="exercise"><h3>Exercício Interativo: Criando uma Classe com Membros Public</h3><p>Vamos criar uma classe <code>Produto</code> com atributos public e um método public para exibir informações.</p><div class="interactive-code"><textarea id="produtoCode">public class Produto
+{
+    // Declare os atributos Nome e Preco como public
+
+    // Crie um construtor public para inicializar Nome e Preco
+
+    // Implemente um método public ExibirInformacoes
+    // que imprime os detalhes do produto
+}</textarea><button class="run-button" onclick="runCode('produtoCode')">Executar</button><div id="output"></div></div></div></div><script>
+function openTab(event, tabId) {
+    var tabContents = document.getElementsByClassName("tab-content");
+    for (var i = 0; i < tabContents.length; i++) {
+        tabContents[i].style.display = "none";
+    }
+    var tabButtons = document.getElementsByClassName("tab-button");
+    for (var i = 0; i < tabButtons.length; i++) {
+        tabButtons[i].className = tabButtons[i].className.replace(" active", "");
+    }
+    document.getElementById(tabId).style.display = "block";
+    event.currentTarget.className += " active";
+}
+
+function runCode(textareaId) {
+    var code = document.getElementById(textareaId).value;
+    var output = document.getElementById('output');
+    output.innerHTML = "Código executado com sucesso!<br>Resultado:<br>" + analyzeCode(code);
+}
+
+function analyzeCode(code) {
+    var result = "";
+    if (code.includes("class Carro")) {
+        if (code.includes("public string Marca") && code.includes("public string Modelo")) {
+            result += "✅ Atributos Marca e Modelo criados corretamente.<br>";
+        } else {
+            result += "❌ Verifique se você criou os atributos Marca e Modelo como public string.<br>";
+        }
+        if (code.includes("public Carro(string marca, string modelo)")) {
+            result += "✅ Construtor criado corretamente.<br>";
+        } else {
+            result += "❌ Verifique se você criou o construtor que recebe marca e modelo.<br>";
+        }
+        if (code.includes("public void ExibirDetalhes()") && code.includes("Console.WriteLine")) {
+            result += "✅ Método ExibirDetalhes implementado corretamente.<br>";
+        } else {
+            result += "❌ Verifique se você implementou o método ExibirDetalhes que imprime os detalhes do carro.<br>";
+        }
+    } else if (code.includes("class Matematica")) {
+        if (code.includes("public static double Potencia(double baseNum, double expoente)")) {
+            result += "✅ Método Potencia declarado corretamente.<br>";
+        } else {
+            result += "❌ Verifique se você declarou o método Potencia como static e com os parâmetros corretos.<br>";
+        }
+        if (code.includes("return Math.Pow(baseNum, expoente);") || code.includes("return resultado;")) {
+            result += "✅ Cálculo da potência implementado corretamente.<br>";
+        } else {
+            result += "❌ Verifique se você implementou o cálculo da potência corretamente.<br>";
+        }
+    } else if (code.includes("class Animal")) {
+        if (code.includes("public void EmitirSom()")) {
+            result += "✅ Método EmitirSom declarado corretamente.<br>";
+        } else {
+            result += "❌ Verifique se você declarou o método EmitirSom como void.<br>";
+        }
+        if (code.includes("Console.WriteLine") && code.includes("Nome") && code.includes("Especie")) {
+            result += "✅ Implementação do método EmitirSom parece correta.<br>";
+        } else {
+            result += "❌ Verifique se você implementou o método EmitirSom para imprimir o som do animal incluindo seu nome e espécie.<br>";
+        }
+    } else if (code.includes("class Produto")) {
+        if (code.includes("public string Nome") && code.includes("public decimal Preco")) {
+            result += "✅ Atributos Nome e Preco declarados corretamente.<br>";
+        } else {
+            result += "❌ Verifique se você declarou os atributos Nome e Preco como public.<br>";
+        }
+        if (code.includes("public Produto(string nome, decimal preco)")) {
+            result += "✅ Construtor público criado corretamente.<br>";
+        } else {
+            result += "❌ Verifique se você criou um construtor público que recebe nome e preço.<br>";
+        }
+        if (code.includes("public void ExibirInformacoes()") && code.includes("Console.WriteLine")) {
+            result += "✅ Método ExibirInformacoes implementado corretamente.<br>";
+        } else {
+            result += "❌ Verifique se você implementou o método público ExibirInformacoes que imprime os detalhes do produto.<br>";
+        }
+    }
+    return result || "Não foi possível analisar o código. Verifique se você seguiu as instruções corretamente.";
+}
+</script></body></html>
