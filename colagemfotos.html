@@ -1,0 +1,160 @@
+<html><head><base href="https://websim.io/dynamic-image-collage/"><title>Dynamic Image Collage Creator</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+  }
+  .dropzone {
+    border: 2px dashed #ccc;
+    border-radius: 20px;
+    width: 300px;
+    height: 200px;
+    padding: 20px;
+    text-align: center;
+    margin: 20px auto;
+    background-color: #fff;
+  }
+  .dropzone.dragover {
+    background-color: #e1e1e1;
+    border-color: #999;
+  }
+  #collage {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-top: 20px;
+    width: 100%;
+  }
+  .image-container {
+    position: relative;
+    overflow: hidden;
+  }
+  .image-container img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+  }
+  #controls {
+    text-align: center;
+    margin: 20px 0;
+  }
+  button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    margin-right: 10px;
+  }
+</style>
+</head>
+<body>
+  <div class="dropzone" id="dropzone">
+    Arraste e solte suas imagens aqui
+  </div>
+  <div id="controls">
+    <label for="imagesPerRow">Fotos por Linha:</label>
+    <input type="number" id="imagesPerRow" min="1" value="3">
+    <button onclick="generateCollage()">Gerar Colagem</button>
+  </div>
+  <div id="collage"></div>
+  <div id="download" style="display: none; text-align: center; margin-top: 20px;">
+    <button onclick="downloadCollage()">Baixar Colagem (300 DPI)</button>
+  </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+<script>
+  let images = [];
+  const dropzone = document.getElementById('dropzone');
+  const collage = document.getElementById('collage');
+
+  dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('dragover');
+  });
+
+  dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('dragover');
+  });
+
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    handleFiles(files);
+  });
+
+  function handleFiles(files) {
+    for (let file of files) {
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          images.push(e.target.result);
+          updateDropzoneText();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+
+  function updateDropzoneText() {
+    dropzone.textContent = `${images.length} imagem(ns) carregada(s). Arraste mais ou gere a colagem.`;
+  }
+
+  function generateCollage() {
+    const imagesPerRow = parseInt(document.getElementById('imagesPerRow').value);
+    collage.innerHTML = '';
+    const containerSize = Math.floor(collage.offsetWidth / imagesPerRow);
+
+    images.forEach((src, index) => {
+      const container = document.createElement('div');
+      container.className = 'image-container';
+      container.style.width = `${containerSize}px`;
+      container.style.height = `${containerSize}px`;
+
+      const img = document.createElement('img');
+      img.src = src;
+      container.appendChild(img);
+      collage.appendChild(container);
+
+      // Forçar quebra de linha se necessário
+      if ((index + 1) % imagesPerRow === 0) {
+        const lineBreak = document.createElement('div');
+        lineBreak.style.flexBasis = '100%';
+        lineBreak.style.height = '0';
+        collage.appendChild(lineBreak);
+      }
+    });
+
+    document.getElementById('download').style.display = 'block';
+  }
+
+  function downloadCollage() {
+    html2canvas(collage, {
+      scale: 3, // Para alcançar aproximadamente 300 DPI
+      useCORS: true
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'collage.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  }
+</script>
+</body></html>
