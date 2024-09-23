@@ -1,20 +1,20 @@
-<!DOCTYPE html>
-<html lang=""pt-BR"">
-<head>
-    <meta charset=""UTF-8"">
-    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-    <title>Removedor de Objetos</title>
-    <style>
+<html><head><base href="https://websimcreationengine.com/"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Removedor de Objetos Otimizado</title><style>
         body {
-            display: flex;
+            font-family: Arial, sans-serif;
             margin: 0;
+            padding: 0;
+            display: flex;
             height: 100vh;
+            background-color: #1e284b;
+            color: white;
         }
         #sidebar {
-            width: 200px;
-            background-color: #f4f4f4;
+            width: 250px;
+            background-color: #16213e;
             padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
         }
         #container {
             flex: 1;
@@ -22,54 +22,118 @@
             justify-content: center;
             align-items: center;
             overflow: auto;
+            padding: 20px;
         }
         canvas {
-            border: 1px solid black;
+            border: 2px solid #333;
+            border-radius: 8px;
             max-width: 100%;
             max-height: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        #buttons, #brushControls {
-            margin: 10px 0;
+        button {
+            background-color: #0f3460;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0a2647;
+        }
+        #buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
         }
         #brushControls {
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-start;
+            margin: 20px 0;
         }
         #brushSize {
-            margin: 0 10px;
+            width: 100%;
+            margin: 10px 0;
         }
         #loading {
             position: fixed;
-            top: 50%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(30, 40, 75, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+        }
+        #loading p {
+            margin-bottom: 20px;
+        }
+        #progressBar {
+            width: 300px;
+            height: 20px;
+            background-color: #16213e;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #progressBarFill {
+            width: 0%;
+            height: 100%;
+            background-color: #0f3460;
+            transition: width 0.5s ease-in-out;
+        }
+        #floatingFooter {
+            position: fixed;
+            bottom: 10px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 20px;
+            transform: translateX(-50%);
+            background-color: rgba(22, 33, 62, 0.9);
+            color: white;
+            padding: 10px 20px;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 80%;
+            font-size: 14px;
             z-index: 1000;
         }
-    </style>
-</head>
-<body>
-    <div id=""loading"">
-        <p>Carregando Modelo IA - Pode levar até 1 minuto</p>
-    </div>
-    <div id=""sidebar"">
-        <button id=""loadButton"">Carregar Imagem</button>
-        <div id=""buttons"">
-            <button id=""prevButton"">Voltar</button>
-            <button id=""nextButton"">Avançar</button>
+    </style></head><body>
+    <div id="loading">
+        <p>Carregando Modelo IA</p>
+        <div id="progressBar">
+            <div id="progressBarFill"></div>
         </div>
-        <div id=""brushControls"">
-            <label for=""brushSize"">Tamanho do Pincel:</label>
-            <input type=""range"" id=""brushSize"" min=""1"" max=""20"" value=""5"">
-            <span id=""brushSizeValue"">5</span>
-        </div>
-        <button id=""downloadButton"">Baixar Resultado</button>
     </div>
-    <div id=""container"">
-        <canvas id=""imageCanvas""></canvas>
+    <div id="sidebar">
+        <h2>Removedor de Objetos</h2>
+        <button id="loadButton">Carregar Imagem</button>
+        <div id="buttons">
+            <button id="prevButton">Voltar</button>
+            <button id="nextButton">Avançar</button>
+        </div>
+        <div id="brushControls">
+            <label for="brushSize">Tamanho do Pincel:</label>
+            <input type="range" id="brushSize" min="1" max="20" value="5">
+            <span id="brushSizeValue">5</span>
+        </div>
+        <button id="downloadButton">Baixar Resultado</button>
+    </div>
+    <div id="container">
+        <canvas id="imageCanvas"></canvas>
+    </div>
+    <div id="floatingFooter">
+        O Removedor de objetos é para pequenas rasuras ou manchas, não espere reconstruir texturas complexas ou partes de pessoas, é uma remoção inteligente e não um preenchimento de áreas.
     </div>
 
     <script>
@@ -79,7 +143,7 @@
         let historyIndex = -1;
         let isDrawing = false;
         let cvReady = false;
-        let brushSize = 5; // Tamanho inicial do pincel
+        let brushSize = 5;
 
         function onOpenCvReady() {
             console.log('OpenCV.js is ready!');
@@ -87,25 +151,44 @@
             document.getElementById('loading').style.display = 'none';
         }
 
+        function updateProgressBar(percentage) {
+            const progressBarFill = document.getElementById('progressBarFill');
+            progressBarFill.style.width = `${percentage}%`;
+        }
+
         function loadOpenCvScript() {
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = 'https://docs.opencv.org/4.5.5/opencv.js';
                 script.async = true;
+
+                let loadingPercentage = 0;
+                const loadingInterval = setInterval(() => {
+                    if (loadingPercentage < 90) {
+                        loadingPercentage += 10;
+                        updateProgressBar(loadingPercentage);
+                    }
+                }, 300);
+
                 script.onload = () => {
-                    if (cv.getBuildInformation) {
-                        console.log(cv.getBuildInformation());
-                        onOpenCvReady();
-                        resolve();
-                    } else {
-                        cv['onRuntimeInitialized'] = () => {
+                    clearInterval(loadingInterval);
+                    updateProgressBar(100);
+                    setTimeout(() => {
+                        if (cv.getBuildInformation) {
                             console.log(cv.getBuildInformation());
                             onOpenCvReady();
                             resolve();
+                        } else {
+                            cv['onRuntimeInitialized'] = () => {
+                                console.log(cv.getBuildInformation());
+                                onOpenCvReady();
+                                resolve();
+                            }
                         }
-                    }
+                    }, 500);
                 };
                 script.onerror = () => {
+                    clearInterval(loadingInterval);
                     reject(new Error('Falha ao carregar o Modelo IA'));
                 };
                 document.head.appendChild(script);
@@ -114,7 +197,7 @@
 
         loadOpenCvScript().catch(error => {
             console.error('Erro ao carregar OpenCV.js:', error);
-            document.getElementById('loading').innerHTML = 'Erro ao carregar o Modelo IA. Por favor, Feche a janela e tente novamente.';
+            document.getElementById('loading').innerHTML = '<p>Erro ao carregar o Modelo IA. Por favor, recarregue a página e tente novamente.</p>';
         });
 
         document.getElementById('loadButton').addEventListener('click', function() {
@@ -125,7 +208,6 @@
 
             const canvas = document.getElementById('imageCanvas');
             const ctx = canvas.getContext('2d');
-            const reader = new FileReader();
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
@@ -155,10 +237,8 @@
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Carregar a imagem original no formato OpenCV
                     originalImage = cv.imread(canvas);
 
-                    // Converter a imagem para CV_8UC3, se necessário
                     if (originalImage.type() !== cv.CV_8UC3) {
                         let convertedImage = new cv.Mat();
                         cv.cvtColor(originalImage, convertedImage, cv.COLOR_RGBA2RGB);
@@ -166,18 +246,10 @@
                         originalImage = convertedImage;
                     }
 
-                    // Inicializar a máscara com zeros (preto)
                     mask = new cv.Mat.zeros(originalImage.rows, originalImage.cols, cv.CV_8UC1);
 
-                    // Salvar no histórico
-                    if (historyIndex === -1 || historyIndex === history.length - 1) {
-                        history.push(originalImage.clone());
-                        historyIndex++;
-                    } else {
-                        history = history.slice(0, historyIndex + 1);
-                        history.push(originalImage.clone());
-                        historyIndex++;
-                    }
+                    history = [originalImage.clone()];
+                    historyIndex = 0;
                 };
                 img.src = url;
             };
@@ -202,7 +274,6 @@
                 ctx.arc(x, y, brushSize, 0, 2 * Math.PI);
                 ctx.fill();
 
-                // Desenhar a máscara em branco na área selecionada com o tamanho do pincel
                 cv.circle(mask, new cv.Point(x, y), brushSize, new cv.Scalar(255), -1);
             }
         });
@@ -214,31 +285,20 @@
                 if (originalImage && mask) {
                     let result = new cv.Mat();
                     try {
-                        // Aplicar inpainting
-                        cv.inpaint(originalImage, mask, result, 5, cv.INPAINT_TELEA);
-
-                        // Atualizar o canvas com a imagem resultante
+                        cv.inpaint(originalImage, mask, result, 3, cv.INPAINT_TELEA);
                         cv.imshow('imageCanvas', result);
 
-                        // Atualizar a imagem original
                         originalImage.delete();
                         originalImage = result.clone();
 
-                        // Atualizar histórico
-                        if (historyIndex === -1 || historyIndex === history.length - 1) {
-                            history.push(originalImage.clone());
-                            historyIndex++;
-                        } else {
-                            history = history.slice(0, historyIndex + 1);
-                            history.push(originalImage.clone());
-                            historyIndex++;
-                        }
+                        history = history.slice(0, historyIndex + 1);
+                        history.push(originalImage.clone());
+                        historyIndex++;
 
-                        // Limpar a máscara
                         mask.delete();
                         mask = new cv.Mat.zeros(originalImage.rows, originalImage.cols, cv.CV_8UC1);
                     } catch (error) {
-                        console.error(""Erro ao aplicar inpainting:"", error);
+                        console.error("Erro ao aplicar inpainting:", error);
                     } finally {
                         result.delete();
                     }
@@ -266,20 +326,17 @@
             }
         });
 
-        // Atualizar o valor do tamanho do pincel quando o slider for ajustado
         document.getElementById('brushSize').addEventListener('input', function() {
             brushSize = parseInt(this.value, 10);
             document.getElementById('brushSizeValue').textContent = brushSize;
         });
 
-        // Adicionar funcionalidade de download
         document.getElementById('downloadButton').addEventListener('click', function() {
             const canvas = document.getElementById('imageCanvas');
             const link = document.createElement('a');
-            link.download = 'result.png';
+            link.download = 'resultado_removedor_objetos.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
     </script>
-</body>
-</html>
+</body></html>
