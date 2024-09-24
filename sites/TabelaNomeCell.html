@@ -1,7 +1,7 @@
-<html><head><base href="https://websim.creation.engine/text-to-table-improved/" />
+<html><head><base href="https://websim.creation.engine/text-to-table-improved-csv-utf8/" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conversor de Texto para Tabela Automático</title>
+<title>Conversor de Texto para Tabela Automático com CSV UTF-8</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -22,7 +22,7 @@
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    width: 350px;
+    width: 400px;
   }
   textarea {
     width: 100%;
@@ -71,7 +71,7 @@
 <body>
   <div class="container">
     <div class="box">
-      <h2>Entrada de Texto</h2>
+      <h2>CloudApp - Converter textos com nome e numero em tabela</h2>
       <textarea id="inputText" placeholder="Digite aqui o nome e número em cada linha..." oninput="processText()"></textarea>
     </div>
     
@@ -81,13 +81,13 @@
         <thead>
           <tr>
             <th>Nome</th>
-            <th>Número</th>
+            <th>Numero</th>
           </tr>
         </thead>
         <tbody>
         </tbody>
       </table>
-      <button onclick="downloadCSV()">Baixar CSV</button>
+      <button onclick="downloadCSV()">Baixar Tabela</button>
     </div>
   </div>
 
@@ -122,21 +122,27 @@ function processText() {
 
 function downloadCSV() {
   const table = document.getElementById('outputTable');
-  let csv = [];
-  for (let i = 0; i < table.rows.length; i++) {
-    let row = [], cols = table.rows[i].cells;
-    for (let j = 0; j < cols.length; j++) {
-      row.push('"' + cols[j].innerText + '"');
-    }
-    csv.push(row.join(','));
+  let csv = '\ufeff'; // BOM for UTF-8
+  csv += 'Nome;Numero\n'; // Header
+
+  for (let i = 1; i < table.rows.length; i++) {
+    let cols = table.rows[i].cells;
+    csv += `"${cols[0].innerText}";"${cols[1].innerText}"\n`;
   }
-  const csvFile = new Blob([csv.join('\n')], {type: "text/csv"});
-  const downloadLink = document.createElement("a");
-  downloadLink.download = "tabela_nomes_numeros.csv";
-  downloadLink.href = window.URL.createObjectURL(csvFile);
-  downloadLink.style.display = "none";
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement("a");
+  
+  if (navigator.msSaveBlob) { // IE 10+
+    navigator.msSaveBlob(blob, "tabela_nomes_numeros.csv");
+  } else {
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.download = "tabela_nomes_numeros.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 }
 </script>
 </body></html>
