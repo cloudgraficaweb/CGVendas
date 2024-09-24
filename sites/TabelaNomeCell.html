@@ -1,0 +1,142 @@
+<html><head><base href="https://websim.creation.engine/text-to-table-improved/" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conversor de Texto para Tabela Automático</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+    padding: 20px;
+  }
+  .container {
+    display: flex;
+    gap: 20px;
+  }
+  .box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    width: 350px;
+  }
+  textarea {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 14px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+  h2 {
+    margin-top: 0;
+    color: #333;
+  }
+  button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background-color: #45a049;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="box">
+      <h2>Entrada de Texto</h2>
+      <textarea id="inputText" placeholder="Digite aqui o nome e número em cada linha..." oninput="processText()"></textarea>
+    </div>
+    
+    <div class="box">
+      <h2>Tabela Resultante</h2>
+      <table id="outputTable">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Número</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <button onclick="downloadCSV()">Baixar CSV</button>
+    </div>
+  </div>
+
+<script>
+function processText() {
+  const input = document.getElementById('inputText').value;
+  const lines = input.split('\n');
+  const tableBody = document.querySelector('#outputTable tbody');
+  tableBody.innerHTML = '';
+
+  lines.forEach(line => {
+    if (line.trim() !== '') {
+      const lastSpaceIndex = line.lastIndexOf(' ');
+      let name, number;
+
+      if (lastSpaceIndex !== -1) {
+        name = line.substring(0, lastSpaceIndex).trim();
+        number = line.substring(lastSpaceIndex + 1).trim();
+      } else {
+        name = line.trim();
+        number = '';
+      }
+
+      const row = tableBody.insertRow();
+      const nameCell = row.insertCell(0);
+      const numberCell = row.insertCell(1);
+      nameCell.textContent = name;
+      numberCell.textContent = number;
+    }
+  });
+}
+
+function downloadCSV() {
+  const table = document.getElementById('outputTable');
+  let csv = [];
+  for (let i = 0; i < table.rows.length; i++) {
+    let row = [], cols = table.rows[i].cells;
+    for (let j = 0; j < cols.length; j++) {
+      row.push('"' + cols[j].innerText + '"');
+    }
+    csv.push(row.join(','));
+  }
+  const csvFile = new Blob([csv.join('\n')], {type: "text/csv"});
+  const downloadLink = document.createElement("a");
+  downloadLink.download = "tabela_nomes_numeros.csv";
+  downloadLink.href = window.URL.createObjectURL(csvFile);
+  downloadLink.style.display = "none";
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+}
+</script>
+</body></html>
