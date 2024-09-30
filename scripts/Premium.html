@@ -1,4 +1,4 @@
-<html><head><base href="https://websimcreation.engine/pt/premium-planos/">
+<html><head><base href="">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PremiumPlus - Plano Premium para Você</title>
@@ -261,34 +261,25 @@
 
   <script>
     // Add animation to plan cards on load
-    const planCards = document.querySelectorAll('.plan-card');
-    
     function animateCards() {
-      planCards.forEach((card, index) => {
+      const cards = document.querySelectorAll('.plan-card');
+      cards.forEach((card, index) => {
         setTimeout(() => {
-          card.style.opacity = 1;
           card.style.transform = 'translateY(0)';
-        }, index * 150);
+          card.style.opacity = '1';
+        }, 100 * index);
       });
     }
 
-    planCards.forEach(card => {
-      card.style.opacity = 0;
-      card.style.transform = 'translateY(20px)';
-      card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-    });
-
     window.addEventListener('load', animateCards);
 
-    // QR Code modal functions
+    // QR Code Modal logic
     function showQRCode(plan, price) {
       const modal = document.getElementById('qrModal');
-      const details = document.getElementById('qrDetails');
-      details.innerHTML = `
-        <h3>Plano selecionado: ${plan}</h3>
-        <p>Valor: ${price}</p>
-        <p>Escaneie o QR Code para efetuar o pagamento</p>
-      `;
+      const qrDetails = document.getElementById('qrDetails');
+      
+      qrDetails.innerHTML = `<strong>${plan}</strong> - Valor: <strong>${price}</strong>`;
+      
       modal.style.display = 'flex';
     }
 
