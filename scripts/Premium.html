@@ -1,4 +1,7 @@
-<html><head><base href="">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<base href="">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PremiumPlus - Plano Premium para Você</title>
@@ -246,7 +249,7 @@
 
   <div class="qr-modal" id="qrModal">
     <div class="qr-content">
-      <img class="qr-code" src="/a/b6022e20-b974-484c-89f7-1b1287697beb" alt="QR Code para pagamento">
+      <img class="qr-code" src="QRCode.jpeg" alt="QR Code para pagamento">
       <div class="qr-details" id="qrDetails"></div>
       <div class="qr-instructions">
         <p>Após o pagamento, envie o comprovante para o número:</p>
@@ -261,25 +264,34 @@
 
   <script>
     // Add animation to plan cards on load
+    const planCards = document.querySelectorAll('.plan-card');
+    
     function animateCards() {
-      const cards = document.querySelectorAll('.plan-card');
-      cards.forEach((card, index) => {
+      planCards.forEach((card, index) => {
         setTimeout(() => {
+          card.style.opacity = 1;
           card.style.transform = 'translateY(0)';
-          card.style.opacity = '1';
-        }, 100 * index);
+        }, index * 150);
       });
     }
 
+    planCards.forEach(card => {
+      card.style.opacity = 0;
+      card.style.transform = 'translateY(20px)';
+      card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    });
+
     window.addEventListener('load', animateCards);
 
-    // QR Code Modal logic
+    // QR Code modal functions
     function showQRCode(plan, price) {
       const modal = document.getElementById('qrModal');
-      const qrDetails = document.getElementById('qrDetails');
-      
-      qrDetails.innerHTML = `<strong>${plan}</strong> - Valor: <strong>${price}</strong>`;
-      
+      const details = document.getElementById('qrDetails');
+      details.innerHTML = `
+        <h3>Plano selecionado: ${plan}</h3>
+        <p>Valor: ${price}</p>
+        <p>Escaneie o QR Code para efetuar o pagamento</p>
+      `;
       modal.style.display = 'flex';
     }
 
