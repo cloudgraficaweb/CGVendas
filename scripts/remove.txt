@@ -37,14 +37,24 @@ function prepareCanvasForColorRemoval(imageObject) {
     const removeColorCanvas = document.getElementById('removeColorCanvas');
     const removeColorCtx = removeColorCanvas.getContext('2d');
 
-    removeColorCanvas.width = imageObject.width * imageObject.scaleX;
-    removeColorCanvas.height = imageObject.height * imageObject.scaleY;
+    // Ajustar o tamanho do canvas para a altura da área visível do site
+    removeColorCanvas.width = window.innerWidth * 0.8; // 80% da largura da janela
+    removeColorCanvas.height = window.innerHeight * 0.8; // 80% da altura da janela
     removeColorCtx.clearRect(0, 0, removeColorCanvas.width, removeColorCanvas.height);
 
     const img = new Image();
     img.src = imageObject.getSrc();
     img.onload = function() {
-        removeColorCtx.drawImage(img, 0, 0, removeColorCanvas.width, removeColorCanvas.height);
+        const aspectRatio = img.width / img.height;
+        let width, height;
+        if (aspectRatio > 1) {
+            width = removeColorCanvas.width;
+            height = width / aspectRatio;
+        } else {
+            height = removeColorCanvas.height;
+            width = height * aspectRatio;
+        }
+        removeColorCtx.drawImage(img, 0, 0, width, height);
     };
 
     removeColorCanvas.addEventListener('click', function(e) {
@@ -154,14 +164,24 @@ function prepareCanvasForColorTotalRemoval(imageObject) {
     const removeColorTotalCanvas = document.getElementById('removeColorTotalCanvas');
     const removeColorTotalCtx = removeColorTotalCanvas.getContext('2d');
 
-    removeColorTotalCanvas.width = imageObject.width * imageObject.scaleX;
-    removeColorTotalCanvas.height = imageObject.height * imageObject.scaleY;
+    // Ajustar o tamanho do canvas para a altura da área visível do site
+    removeColorTotalCanvas.width = window.innerWidth * 0.8; // 80% da largura da janela
+    removeColorTotalCanvas.height = window.innerHeight * 0.8; // 80% da altura da janela
     removeColorTotalCtx.clearRect(0, 0, removeColorTotalCanvas.width, removeColorTotalCanvas.height);
 
     const img = new Image();
     img.src = imageObject.getSrc();
     img.onload = function() {
-        removeColorTotalCtx.drawImage(img, 0, 0, removeColorTotalCanvas.width, removeColorTotalCanvas.height);
+        const aspectRatio = img.width / img.height;
+        let width, height;
+        if (aspectRatio > 1) {
+            width = removeColorTotalCanvas.width;
+            height = width / aspectRatio;
+        } else {
+            height = removeColorTotalCanvas.height;
+            width = height * aspectRatio;
+        }
+        removeColorTotalCtx.drawImage(img, 0, 0, width, height);
     };
 
     removeColorTotalCanvas.addEventListener('click', function(e) {
