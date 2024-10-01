@@ -37,9 +37,13 @@ function prepareCanvasForColorRemoval(imageObject) {
     const removeColorCanvas = document.getElementById('removeColorCanvas');
     const removeColorCtx = removeColorCanvas.getContext('2d');
 
-    // Ajustar o tamanho do canvas para a altura da área visível do site
-    removeColorCanvas.width = window.innerWidth * 0.8; // 80% da largura da janela
-    removeColorCanvas.height = window.innerHeight * 0.8; // 80% da altura da janela
+    // Ajustar o tamanho do canvas para 15x15 cm
+    const dpi = window.devicePixelRatio || 1;
+    const cmToPx = 96 / 2.54; // 96 DPI é uma resolução comum
+    const widthCm = 15;
+    const heightCm = 15;
+    removeColorCanvas.width = widthCm * cmToPx * dpi;
+    removeColorCanvas.height = heightCm * cmToPx * dpi;
     removeColorCtx.clearRect(0, 0, removeColorCanvas.width, removeColorCanvas.height);
 
     const img = new Image();
@@ -164,9 +168,13 @@ function prepareCanvasForColorTotalRemoval(imageObject) {
     const removeColorTotalCanvas = document.getElementById('removeColorTotalCanvas');
     const removeColorTotalCtx = removeColorTotalCanvas.getContext('2d');
 
-    // Ajustar o tamanho do canvas para a altura da área visível do site
-    removeColorTotalCanvas.width = window.innerWidth * 0.8; // 80% da largura da janela
-    removeColorTotalCanvas.height = window.innerHeight * 0.8; // 80% da altura da janela
+    // Ajustar o tamanho do canvas para 15x15 cm
+    const dpi = window.devicePixelRatio || 1;
+    const cmToPx = 96 / 2.54; // 96 DPI é uma resolução comum
+    const widthCm = 15;
+    const heightCm = 15;
+    removeColorTotalCanvas.width = widthCm * cmToPx * dpi;
+    removeColorTotalCanvas.height = heightCm * cmToPx * dpi;
     removeColorTotalCtx.clearRect(0, 0, removeColorTotalCanvas.width, removeColorTotalCanvas.height);
 
     const img = new Image();
