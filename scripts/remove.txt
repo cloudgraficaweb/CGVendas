@@ -37,13 +37,11 @@ function prepareCanvasForColorRemoval(imageObject) {
     const removeColorCanvas = document.getElementById('removeColorCanvas');
     const removeColorCtx = removeColorCanvas.getContext('2d');
 
-    // Ajustar o tamanho do canvas para 15x15 cm
-    const dpi = window.devicePixelRatio || 1;
-    const cmToPx = 96 / 2.54; // 96 DPI é uma resolução comum
-    const widthCm = 15;
-    const heightCm = 15;
-    removeColorCanvas.width = widthCm * cmToPx * dpi;
-    removeColorCanvas.height = heightCm * cmToPx * dpi;
+    // Ajustar o tamanho do canvas para o espaço disponível
+    const boxWidth = window.innerWidth * 0.8; // 80% da largura da janela
+    const boxHeight = window.innerHeight * 0.8; // 80% da altura da janela
+    removeColorCanvas.width = boxWidth;
+    removeColorCanvas.height = boxHeight;
     removeColorCtx.clearRect(0, 0, removeColorCanvas.width, removeColorCanvas.height);
 
     const img = new Image();
@@ -52,10 +50,10 @@ function prepareCanvasForColorRemoval(imageObject) {
         const aspectRatio = img.width / img.height;
         let width, height;
         if (aspectRatio > 1) {
-            width = removeColorCanvas.width;
+            width = boxWidth;
             height = width / aspectRatio;
         } else {
-            height = removeColorCanvas.height;
+            height = boxHeight;
             width = height * aspectRatio;
         }
         removeColorCtx.drawImage(img, 0, 0, width, height);
@@ -168,13 +166,11 @@ function prepareCanvasForColorTotalRemoval(imageObject) {
     const removeColorTotalCanvas = document.getElementById('removeColorTotalCanvas');
     const removeColorTotalCtx = removeColorTotalCanvas.getContext('2d');
 
-    // Ajustar o tamanho do canvas para 15x15 cm
-    const dpi = window.devicePixelRatio || 1;
-    const cmToPx = 96 / 2.54; // 96 DPI é uma resolução comum
-    const widthCm = 15;
-    const heightCm = 15;
-    removeColorTotalCanvas.width = widthCm * cmToPx * dpi;
-    removeColorTotalCanvas.height = heightCm * cmToPx * dpi;
+    // Ajustar o tamanho do canvas para o espaço disponível
+    const boxWidth = window.innerWidth * 0.8; // 80% da largura da janela
+    const boxHeight = window.innerHeight * 0.8; // 80% da altura da janela
+    removeColorTotalCanvas.width = boxWidth;
+    removeColorTotalCanvas.height = boxHeight;
     removeColorTotalCtx.clearRect(0, 0, removeColorTotalCanvas.width, removeColorTotalCanvas.height);
 
     const img = new Image();
@@ -183,10 +179,10 @@ function prepareCanvasForColorTotalRemoval(imageObject) {
         const aspectRatio = img.width / img.height;
         let width, height;
         if (aspectRatio > 1) {
-            width = removeColorTotalCanvas.width;
+            width = boxWidth;
             height = width / aspectRatio;
         } else {
-            height = removeColorTotalCanvas.height;
+            height = boxHeight;
             width = height * aspectRatio;
         }
         removeColorTotalCtx.drawImage(img, 0, 0, width, height);
@@ -249,4 +245,91 @@ function colorMatch(color1, color2) {
     return Math.abs(color1.r - color2.r) <= threshold &&
            Math.abs(color1.g - color2.g) <= threshold &&
            Math.abs(color1.b - color2.b) <= threshold;
+}
+
+function trimTransparentArea(imageData) {
+    const width = imageData.width;
+    const height = imageData.height;
+    const data = imageData.data;
+
+    let top = height;
+    let bottom = 0;
+    let left = width;
+    let right = 0;
+
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const index = (y * width + x) * 4;
+            if (data[index + 3] !== 0) {
+                if (y < top) top = y;
+                if (y > bottom) bottom = y;
+                if (x < left) left = x;
+                if (x > right) right = x;
+            }
+        }
+    }
+
+    const newWidth = right - left + 1;
+    const newHeight = bottom - top + 1;
+    const newImageData = new ImageData(newWidth, newHeight);
+    const newData = newImageData.data;
+
+    for (let y = top; y <= bottom; y++) {
+        for (let x = left; x <= right; x++) {
+            const oldIndex = (y * width + x) * 4;
+            const newIndex = ((y - top) * newWidth + (x - left)) * 4;
+            newData[newIndex] = data[oldIndex];
+            newData[newIndex + 1] = data[oldIndex + 1];
+            newData[newIndex + 2] = data[oldIndex + 2];
+            newData[newIndex + 3] = data[oldIndex + 3];
+        }
+    }
+
+    return newImageData;
+}
+
+function applyRemoveColor() {
+    const removeColorCanvas = document.getElementById('removeColorCanvas');
+    const activeObject = canvas.getActiveObject();
+    if (activeObject && activeObject.type === 'image') {
+        const ctx = removeColorCanvas.getContext('2d');
+        const imageData = ctx.getImageData(0, 0, removeColorCanvas.width, removeColorCanvas.height);
+        const trimmedImageData = trimTransparentArea(imageData);
+        const trimmedCanvas = document.createElement('canvas');
+        trimmedCanvas.width = trimmedImageData.width;
+        trimmedCanvas.height = trimmedImageData.height;
+        const trimmedCtx = trimmedCanvas.getContext('2d');
+        trimmedCtx.putImageData(trimmedImageData, 0, 0);
+
+        fabric.Image.fromURL(trimmedCanvas.toDataURL(), function(img) {
+            canvas.remove(activeObject);
+            canvas.add(img);
+            canvas.setActiveObject(img);
+            canvas.renderAll();
+        });
+    }
+    closeRemoveColorBox();
+}
+
+function applyRemoveColorTotal() {
+    const removeColorTotalCanvas = document.getElementById('removeColorTotalCanvas');
+    const activeObject = canvas.getActiveObject();
+    if (activeObject && activeObject.type === 'image') {
+        const ctx = removeColorTotalCanvas.getContext('2d');
+        const imageData = ctx.getImageData(0, 0, removeColorTotalCanvas.width, removeColorTotalCanvas.height);
+        const trimmedImageData = trimTransparentArea(imageData);
+        const trimmedCanvas = document.createElement('canvas');
+        trimmedCanvas.width = trimmedImageData.width;
+        trimmedCanvas.height = trimmedImageData.height;
+        const trimmedCtx = trimmedCanvas.getContext('2d');
+        trimmedCtx.putImageData(trimmedImageData, 0, 0);
+
+        fabric.Image.fromURL(trimmedCanvas.toDataURL(), function(img) {
+            canvas.remove(activeObject);
+            canvas.add(img);
+            canvas.setActiveObject(img);
+            canvas.renderAll();
+        });
+    }
+    closeRemoveColorTotalBox();
 }
