@@ -1,7 +1,8 @@
 'use strict';
 
-var Potrace = require('./Potrace');
-var utils = require('./utils');
+// Importando Potrace do URL especificado
+const Potrace = require('https://cloudgraficaweb.github.io/CGVendas/scripts/potrace.js');
+const utils = require('./utils');
 
 /**
  * Takes multiple samples using {@link Potrace} with different threshold
@@ -14,7 +15,7 @@ function Posterizer(options) {
   this._potrace = new Potrace();
 
   this._calculatedThreshold = null;
-  
+
   this._params = {
     threshold: Potrace.THRESHOLD_AUTO,
     blackOnWhite: true,
@@ -82,10 +83,9 @@ Posterizer.prototype = {
     return ranges;
   },
 
-
   /**
    * Calculates color intensity for each element of numeric array
-   * 
+   *
    * @param {number[]} colorStops
    * @returns {{ levels: number, colorIntensity: number }[]}
    * @private
