@@ -1,0 +1,250 @@
+<html><head><base href="https://safeprescription.test/"><title>Prescrição C2 - Sistema de Receituário Controlado</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .prescription-container {
+        background: white;
+        width: 800px;
+        padding: 40px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        position: relative;
+    }
+
+    .header {
+        text-align: center;
+        border-bottom: 2px solid #000;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+    .notification-strip {
+        background: #c41e3a;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 20px;
+        border-radius: 4px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .footer {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 12px;
+        color: #666;
+    }
+
+    .serial-number {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        color: #c41e3a;
+    }
+
+    .download-btn, .add-field-btn {
+        display: inline-block;
+        width: 200px;
+        margin: 20px 10px;
+        padding: 10px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s;
+    }
+
+    .add-field-btn {
+        background: #2196F3;
+    }
+
+    .download-btn:hover {
+        background: #45a049;
+    }
+
+    .add-field-btn:hover {
+        background: #1976D2;
+    }
+
+    .editable {
+        border: 1px solid transparent;
+        padding: 5px;
+        cursor: text;
+        transition: border-color 0.3s;
+    }
+
+    .editable:hover {
+        border-color: #ddd;
+    }
+
+    .remove-field {
+        position: absolute;
+        right: -30px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: red;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    @media print {
+        .download-btn, .add-field-btn, .remove-field {
+            display: none;
+        }
+        .prescription-container {
+            box-shadow: none;
+        }
+    }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="prescription-container" id="prescription">
+        <div class="serial-number editable" contenteditable="true">Nº AA123456789</div>
+        
+        <div class="header">
+            <h2 class="editable" contenteditable="true">RECEITUÁRIO DE CONTROLE ESPECIAL</h2>
+            <p class="editable" contenteditable="true">NOTIFICAÇÃO DE RECEITA C2</p>
+        </div>
+
+        <div class="notification-strip editable" contenteditable="true">
+            MEDICAMENTO SUJEITO A CONTROLE ESPECIAL - LISTA C2
+        </div>
+
+        <div id="form-fields">
+            <div class="form-group">
+                <label class="editable" contenteditable="true">1. IDENTIFICAÇÃO DO EMITENTE</label>
+                <input type="text" class="form-control" placeholder="Nome do médico - CRM">
+                <span class="remove-field">&times;</span>
+            </div>
+
+            <div class="form-group">
+                <label class="editable" contenteditable="true">2. IDENTIFICAÇÃO DO PACIENTE</label>
+                <input type="text" class="form-control" placeholder="Nome do paciente - CPF">
+                <span class="remove-field">&times;</span>
+            </div>
+
+            <div class="form-group">
+                <label class="editable" contenteditable="true">3. PRESCRIÇÃO</label>
+                <textarea class="form-control" rows="4" placeholder="Medicamento:&#10;Quantidade:&#10;Posologia:&#10;Uso Contínuo:"></textarea>
+                <span class="remove-field">&times;</span>
+            </div>
+
+            <div class="form-group">
+                <label class="editable" contenteditable="true">4. DATA E ASSINATURA</label>
+                <input type="text" class="form-control" placeholder="Cidade, data">
+                <span class="remove-field">&times;</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="editable" contenteditable="true">Esta notificação de receita é válida por 30 (trinta) dias a partir da data de emissão</p>
+            <p class="editable" contenteditable="true">Somente válida no território nacional</p>
+        </div>
+    </div>
+
+    <div style="text-align: center;">
+        <button class="download-btn" onclick="downloadPDF()">Baixar PDF</button>
+        <button class="add-field-btn" onclick="addNewField()">Adicionar Campo</button>
+    </div>
+
+    <script>
+        function downloadPDF() {
+            const element = document.getElementById('prescription');
+            const opt = {
+                margin: 1,
+                filename: 'receita-c2.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // Adicionar novo campo
+        function addNewField() {
+            const formFields = document.getElementById('form-fields');
+            const newFieldNumber = formFields.children.length + 1;
+            
+            const newField = document.createElement('div');
+            newField.className = 'form-group';
+            newField.innerHTML = `
+                <label class="editable" contenteditable="true">${newFieldNumber}. NOVO CAMPO</label>
+                <input type="text" class="form-control" placeholder="Digite aqui">
+                <span class="remove-field">&times;</span>
+            `;
+            
+            formFields.appendChild(newField);
+            setupRemoveField(newField.querySelector('.remove-field'));
+        }
+
+        // Configurar eventos de remoção para campos existentes
+        function setupRemoveFields() {
+            document.querySelectorAll('.remove-field').forEach(setupRemoveField);
+        }
+
+        function setupRemoveField(removeButton) {
+            removeButton.addEventListener('click', function() {
+                const formGroup = this.parentElement;
+                formGroup.remove();
+                renumberFields();
+            });
+        }
+
+        // Renumerar campos após remoção
+        function renumberFields() {
+            const labels = document.querySelectorAll('.form-group label');
+            labels.forEach((label, index) => {
+                const text = label.textContent.replace(/^\d+\./, `${index + 1}.`);
+                label.textContent = text;
+            });
+        }
+
+        // Auto formatação para a data
+        document.querySelector('input[placeholder="Cidade, data"]').addEventListener('focus', function() {
+            if (!this.value) {
+                const today = new Date();
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                const cityDate = `São Paulo, ${today.toLocaleDateString('pt-BR', options)}`;
+                this.value = cityDate;
+            }
+        });
+
+        // Inicializar eventos de remoção
+        setupRemoveFields();
+    </script>
+</body>
+</html>
