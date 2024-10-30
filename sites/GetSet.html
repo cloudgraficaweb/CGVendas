@@ -1,0 +1,176 @@
+<html><head><base href="." /><title>Entendendo Get e Set em POO</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background: #f0f2f5;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        color: #2d3436;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .example-box {
+        background: #f8f9fa;
+        border-left: 4px solid #00b894;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 5px;
+    }
+
+    .code {
+        background: #2d3436;
+        color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        font-family: monospace;
+        position: relative;
+        margin: 20px 0;
+    }
+
+    .mascot {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        display: block;
+    }
+
+    .animation-container {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    .highlight {
+        color: #00b894;
+        font-weight: bold;
+    }
+
+    button {
+        background: #00b894;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px;
+    }
+
+    button:hover {
+        background: #00a884;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .emoji {
+        font-size: 24px;
+        margin: 0 5px;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Entendendo Get e Set em POO 🎮</h1>
+        
+        <div class="animation-container">
+            <svg class="mascot" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="#00b894"/>
+                <circle cx="35" cy="40" r="5" fill="white"/>
+                <circle cx="65" cy="40" r="5" fill="white"/>
+                <path d="M 35 65 Q 50 80 65 65" stroke="white" fill="none" stroke-width="3"/>
+            </svg>
+        </div>
+
+        <h2>O que são Get e Set? 🤔</h2>
+        <p>Imagine que você tem um videogame em casa. Você não deixa qualquer pessoa mexer nele, certo?</p>
+        <p>Em programação, <span class="highlight">Get</span> e <span class="highlight">Set</span> são como "regras" que você cria para acessar e modificar informações importantes:</p>
+
+        <div class="example-box">
+            <p>🎮 <strong>GET</strong> = Pegar/Consultar uma informação</p>
+            <p>⚡ <strong>SET</strong> = Definir/Modificar uma informação</p>
+        </div>
+
+        <h2>Exemplo Prático! 🎯</h2>
+        
+        <div class="code">
+            <pre>
+class VideoGame {
+    private String jogo;  // informação protegida!
+
+    // GET - Permite ver qual jogo está no videogame
+    public String getJogo() {
+        return this.jogo;
+    }
+
+    // SET - Permite trocar o jogo, mas com regras!
+    public void setJogo(String novoJogo) {
+        if(novoJogo != null && !novoJogo.isEmpty()) {
+            this.jogo = novoJogo;
+        }
+    }
+}</pre>
+        </div>
+
+        <div id="interactive-demo">
+            <h3>Vamos testar? 🎮</h3>
+            <p>Videogame do João:</p>
+            <div id="game-status">Nenhum jogo inserido</div>
+            <button onclick="setGame()">Inserir Jogo</button>
+            <button onclick="getGame()">Ver Jogo Atual</button>
+        </div>
+
+        <h2>Por que usar Get e Set? 🤓</h2>
+        <div class="example-box">
+            <p>1. <strong>Proteção</strong>: Evita que alguém modifique dados importantes de forma errada</p>
+            <p>2. <strong>Controle</strong>: Você pode adicionar regras sobre como os dados são acessados ou modificados</p>
+            <p>3. <strong>Organização</strong>: Torna seu código mais organizado e fácil de manter</p>
+        </div>
+    </div>
+
+<script>
+    let currentGame = "";
+
+    function setGame() {
+        let novoJogo = prompt("Digite o nome do jogo:");
+        if(novoJogo != null && novoJogo.trim() !== "") {
+            currentGame = novoJogo;
+            document.getElementById('game-status').innerText = "Jogo atual: " + currentGame;
+        } else {
+            alert("O nome do jogo não pode ficar vazio!");
+        }
+    }
+
+    function getGame() {
+        if(currentGame === "") {
+            alert("Nenhum jogo inserido ainda!");
+        } else {
+            alert("O jogo atual é: " + currentGame);
+        }
+    }
+
+    // Animação simples do mascote
+    const mascot = document.querySelector('.mascot');
+    setInterval(() => {
+        mascot.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+            mascot.style.transform = 'scale(1)';
+        }, 500);
+    }, 2000);
+</script>
+</body>
+</html>
