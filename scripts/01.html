@@ -1,20 +1,47 @@
 <html><head><base href="https://cloudgrafica.blogspot.com/p/cloudapp.html"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Removedor de Objetos IA</title><style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
             height: 100vh;
-            background-color: #1e284b;
-            color: white;
+            background: linear-gradient(135deg, #1e284b 0%, #0f172a 100%);
+            color: #e2e8f0;
         }
         #sidebar {
-            width: 250px;
-            background-color: #16213e;
-            padding: 20px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            width: 280px;
+            background: rgba(22, 33, 62, 0.95);
+            padding: 25px;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        #sidebar h2 {
+            margin-bottom: 25px;
+            font-size: 1.5em;
+            color: #60a5fa;
+            text-align: center;
+        }
+        button {
+            background: linear-gradient(to right, #3b82f6, #2563eb);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 6px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background: linear-gradient(to right, #2563eb, #1d4ed8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
         #container {
             flex: 1;
@@ -25,43 +52,41 @@
             padding: 20px;
         }
         canvas {
-            border: 2px solid #333;
-            border-radius: 8px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             max-width: 100%;
             max-height: 100%;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        button {
-            background-color: #0f3460;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #0a2647;
-        }
-        #buttons {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
         #brushControls {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            background: rgba(15, 23, 42, 0.3);
+            padding: 15px;
+            border-radius: 8px;
             margin: 20px 0;
+        }
+        #brushControls label {
+            color: #94a3b8;
+            margin-bottom: 8px;
+            display: block;
         }
         #brushSize {
             width: 100%;
-            margin: 10px 0;
+            height: 6px;
+            border-radius: 3px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        #brushSize::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #3b82f6;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        #brushSize::-webkit-slider-thumb:hover {
+            background: #2563eb;
         }
         #loading {
             position: fixed;
@@ -69,7 +94,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(30, 40, 75, 0.9);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 40, 75, 0.95) 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -82,31 +107,26 @@
         }
         #progressBar {
             width: 300px;
-            height: 20px;
-            background-color: #16213e;
-            border-radius: 10px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
             overflow: hidden;
         }
         #progressBarFill {
-            width: 0%;
+            background: linear-gradient(to right, #3b82f6, #2563eb);
+            transition: width 0.3s ease-in-out;
             height: 100%;
-            background-color: #0f3460;
-            transition: width 0.5s ease-in-out;
         }
-        #floatingFooter {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(22, 33, 62, 0.9);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        #warningMessage {
+            margin-top: auto;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 8px;
+            color: #94a3b8;
+            font-size: 0.9em;
+            line-height: 1.4;
             text-align: center;
-            max-width: 80%;
-            font-size: 14px;
-            z-index: 1000;
+            margin-top: 20px;
         }
     </style></head><body>
     <div id="loading">
@@ -116,7 +136,7 @@
         </div>
     </div>
     <div id="sidebar">
-        <h2>CloudRemover Objetos IA</h2>
+        <h2>CloudRemover IA</h2>
         <button id="loadButton">Carregar Imagem</button>
         <div id="buttons">
             <button id="prevButton">Voltar</button>
@@ -128,12 +148,12 @@
             <span id="brushSizeValue">5</span>
         </div>
         <button id="downloadButton">Baixar Resultado</button>
+        <div id="warningMessage">
+            O Removedor de objetos é para pequenas rasuras ou manchas, não espere reconstruir texturas complexas ou partes de pessoas, é uma remoção inteligente e não um preenchimento de áreas.
+        </div>
     </div>
     <div id="container">
         <canvas id="imageCanvas"></canvas>
-    </div>
-    <div id="floatingFooter">
-        O Removedor de objetos é para pequenas rasuras ou manchas, não espere reconstruir texturas complexas ou partes de pessoas, é uma remoção inteligente e não um preenchimento de áreas.
     </div>
 
     <script>
