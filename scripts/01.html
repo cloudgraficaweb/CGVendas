@@ -1,4 +1,10 @@
-<html><head><base href="https://cloudgrafica.blogspot.com/p/cloudapp.html"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Removedor de Objetos IA</title><style>
+<html>
+<head>
+    <base href="https://cloudgrafica.blogspot.com/p/cloudapp.html">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Removedor de Objetos IA</title>
+    <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
@@ -128,7 +134,9 @@
             text-align: center;
             margin-top: 20px;
         }
-    </style></head><body>
+    </style>
+</head>
+<body>
     <div id="loading">
         <p>Carregando Modelo IA</p>
         <div id="progressBar">
@@ -220,23 +228,13 @@
             document.getElementById('loading').innerHTML = '<p>Erro ao carregar o Modelo IA. Por favor, recarregue a página e tente novamente.</p>';
         });
 
-        document.getElementById('loadButton').addEventListener('click', function() {
-            if (!cvReady) {
-                alert('O Modelo IA ainda está carregando, por favor aguarde...');
-                return;
-            }
-
-            const canvas = document.getElementById('imageCanvas');
-            const ctx = canvas.getContext('2d');
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
+        function handleFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
                 const img = new Image();
-                const url = URL.createObjectURL(file);
-
                 img.onload = function() {
+                    const canvas = document.getElementById('imageCanvas');
+                    const ctx = canvas.getContext('2d');
                     const container = document.getElementById('container');
                     const containerWidth = container.clientWidth;
                     const containerHeight = container.clientHeight;
@@ -271,7 +269,23 @@
                     history = [originalImage.clone()];
                     historyIndex = 0;
                 };
-                img.src = url;
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        document.getElementById('loadButton').addEventListener('click', function() {
+            if (!cvReady) {
+                alert('O Modelo IA ainda está carregando, por favor aguarde...');
+                return;
+            }
+
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                handleFile(file);
             };
             input.click();
         });
@@ -358,5 +372,18 @@
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
+
+        // Adicionar suporte para colar imagem com Ctrl + V
+        window.addEventListener('paste', (e) => {
+            const items = (e.clipboardData || window.clipboardData).items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') === 0) {
+                    const file = items[i].getAsFile();
+                    handleFile(file);
+                    break;
+                }
+            }
+        });
     </script>
-</body></html>
+</body>
+</html>
