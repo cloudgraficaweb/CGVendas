@@ -1,0 +1,746 @@
+<html><head><base href="." />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Criador de Links - Digital</title>
+<style>
+:root {
+  --gradient: linear-gradient(45deg, #6e72fc, #ad1deb);
+  --bg-gradient: linear-gradient(135deg, #1e3c72, #2a5298, #7303c0, #ec38bc);
+  --button-color: #6b48ff;
+  --container-bg: rgba(255, 255, 255, 0.95);
+  --text-color: #333;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  background-size: 400% 400%;
+  animation: gradientAnimation 15s ease infinite;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-color);
+}
+
+.sidebar {
+  width: 300px;
+  background: var(--container-bg);
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  display: none; /* Hide sidebar initially until logged in */
+}
+
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1001;
+  background: var(--button-color);
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.main-content {
+  margin-left: 320px;
+  padding: 20px;
+  width: calc(100% - 320px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar-section {
+  margin-bottom: 20px;
+}
+
+.sidebar-section h3 {
+  font-size: 1.2em;
+  color: var(--button-color);
+  margin-bottom: 10px;
+}
+
+.edit-option {
+  padding: 8px;
+  margin: 5px 0;
+  background: #f5f5f5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.edit-option:hover {
+  background: #ebebeb;
+}
+
+.edit-form {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  display: none;
+}
+
+.edit-form.active {
+  display: block;
+}
+
+.edit-form input,
+.edit-form select {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.profile {
+  margin: 20px 0;
+  text-align: center;
+  background: var(--container-bg);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--gradient);
+  padding: 3px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.links-container {
+  max-width: 680px;
+  width: 100%;
+  margin: 20px auto;
+  background: var(--container-bg);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.link-item {
+  background: var(--button-color);
+  border: none;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin: 12px 0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+}
+
+.link-item:hover {
+  transform: translateY(-2px);
+  background: #7e5fff;
+  box-shadow: 0 4px 20px rgba(107, 72, 255, 0.3);
+}
+
+.link-icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-text {
+  background: var(--gradient);
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+.btn {
+  background: var(--button-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 5px 0;
+  width: 100%;
+}
+
+.btn:hover {
+  background: #7e5fff;
+}
+
+.floating-edit-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--button-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  z-index: 1002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s;
+}
+
+.floating-edit-btn:hover {
+  transform: scale(1.1);
+}
+
+.login-modal {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--container-bg);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+  z-index: 1003;
+  width: 300px;
+}
+
+.login-modal.active {
+  display: block;
+}
+
+.login-modal h3 {
+  color: var(--button-color);
+  margin-top: 0;
+}
+
+.login-modal input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1002;
+}
+
+.overlay.active {
+  display: block;
+}
+
+@media screen and (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    width: 80%;
+    max-width: 300px;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .profile {
+    width: calc(100% - 40px);
+    margin: 60px 20px 20px 20px;
+  }
+
+  .links-container {
+    width: calc(100% - 40px);
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .link-item {
+    padding: 14px 16px;
+    font-size: 0.95em;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .profile {
+    padding: 20px;
+  }
+
+  .links-container {
+    padding: 15px;
+  }
+
+  .gradient-text {
+    font-size: 1.5em;
+  }
+}
+</style>
+</head>
+<body>
+  <button class="menu-toggle" onclick="toggleMenu()">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+      <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+    </svg>
+  </button>
+
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <h3>Informações Pessoais</h3>
+      <div class="edit-option" onclick="toggleForm('profile-form')">Editar Perfil</div>
+      <div class="edit-form" id="profile-form">
+        <input type="text" id="displayName" placeholder="Nome de Exibição" value="@casa.impressao">
+        <input type="text" id="bio" placeholder="Biografia" value="✨ Gráfica Digital & Offset ✨">
+        <input type="file" id="profilePic" accept="image/*">
+        <button class="btn" onclick="saveProfile()">Salvar Alterações</button>
+      </div>
+    </div>
+    
+    <div class="sidebar-section">
+      <h3>Links</h3>
+      <div class="edit-option" onclick="toggleForm('link-form')">Adicionar Novo Link</div>
+      <div class="edit-form" id="link-form">
+        <input type="text" id="newLinkText" placeholder="Texto do Link">
+        <input type="url" id="newLinkUrl" placeholder="URL">
+        <input type="color" id="newLinkColor" value="#6b48ff">
+        <select id="newLinkIcon">
+          <option value="instagram">Ícone do Instagram</option>
+          <option value="youtube">Ícone do YouTube</option>
+          <option value="whatsapp">Ícone do WhatsApp</option>
+        </select>
+        <button class="btn" onclick="addNewLink()">Adicionar Link</button>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Links Existentes</h3>
+      <div class="edit-option" onclick="showLinkEditor('instagram')">Editar Instagram</div>
+      <div class="edit-option" onclick="showLinkEditor('youtube')">Editar YouTube</div>
+      <div class="edit-option" onclick="showLinkEditor('whatsapp')">Editar WhatsApp</div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="profile">
+      <div class="avatar">
+        <img src="https://cloudgraficaweb.github.io/CGVendas/sites/casaimpressao.jpg" alt="Foto do Perfil" id="profileImage">
+      </div>
+      <h1 class="gradient-text" id="profileName">@casa.impressao</h1>
+      <p id="profileBio">✨ Gráfica Digital & Offset ✨</p>
+    </div>
+
+    <div class="links-container" id="linksContainer">
+      <a href="https://instagram.com" class="link-item">
+        Instagram
+        <svg class="link-icon" viewBox="0 0 24 24" fill="white">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+      </a>
+
+      <a href="https://youtube.com" class="link-item">
+        YouTube
+        <svg class="link-icon" viewBox="0 0 24 24" fill="white">
+          <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+        </svg>
+      </a>
+
+      <a href="https://wa.me/1234567890" class="link-item">
+        WhatsApp
+        <svg class="link-icon" viewBox="0 0 24 24" fill="white">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <button class="floating-edit-btn" onclick="showLoginModal()">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+    </svg>
+  </button>
+
+  <div class="overlay" onclick="hideLoginModal()"></div>
+
+  <div class="login-modal">
+    <h3>Login</h3>
+    <input type="text" id="username" placeholder="Usuário">
+    <input type="password" id="password" placeholder="Senha">
+    <button class="btn" onclick="login()">Entrar</button>
+  </div>
+
+<script>
+let isLoggedIn = false;
+
+// Load data from localStorage on page load
+window.addEventListener('DOMContentLoaded', () => {
+  loadFromLocalStorage();
+  checkLoginStatus();
+});
+
+function checkLoginStatus() {
+  isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const sidebar = document.querySelector('.sidebar');
+  sidebar.style.display = isLoggedIn ? 'block' : 'none';
+}
+
+function showLoginModal() {
+  if (!isLoggedIn) {
+    document.querySelector('.overlay').classList.add('active');
+    document.querySelector('.login-modal').classList.add('active');
+  }
+}
+
+function hideLoginModal() {
+  document.querySelector('.overlay').classList.remove('active');
+  document.querySelector('.login-modal').classList.remove('active');
+}
+
+function login() {
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+
+  if (username === 'admin' && password === 'admin') {
+    isLoggedIn = true;
+    localStorage.setItem('isLoggedIn', 'true');
+    hideLoginModal();
+    document.querySelector('.sidebar').style.display = 'block';
+    alert('Login realizado com sucesso!');
+  } else {
+    alert('Usuário ou senha incorretos!');
+  }
+}
+
+// Local Storage Functions
+function saveToLocalStorage() {
+  const data = {
+    profile: {
+      name: document.getElementById('profileName').textContent,
+      bio: document.getElementById('profileBio').textContent,
+      image: document.getElementById('profileImage').src
+    },
+    links: Array.from(document.querySelectorAll('.link-item')).map(link => ({
+      text: link.childNodes[0].textContent.trim(),
+      url: link.href,
+      color: link.style.backgroundColor,
+      icon: link.querySelector('svg path').getAttribute('d')
+    }))
+  };
+  
+  localStorage.setItem('linkTreeData', JSON.stringify(data));
+}
+
+function loadFromLocalStorage() {
+  const data = localStorage.getItem('linkTreeData');
+  if (!data) return;
+
+  const parsedData = JSON.parse(data);
+  
+  // Load profile
+  document.getElementById('profileName').textContent = parsedData.profile.name;
+  document.getElementById('profileBio').textContent = parsedData.profile.bio;
+  document.getElementById('profileImage').src = parsedData.profile.image;
+  
+  // Load links
+  const linksContainer = document.getElementById('linksContainer');
+  linksContainer.innerHTML = '';
+  parsedData.links.forEach(link => {
+    const linkElement = document.createElement('a');
+    linkElement.href = link.url;
+    linkElement.className = 'link-item';
+    linkElement.style.backgroundColor = link.color;
+    linkElement.innerHTML = `
+      ${link.text}
+      <svg class="link-icon" viewBox="0 0 24 24" fill="white">
+        <path d="${link.icon}"/>
+      </svg>
+    `;
+    linksContainer.appendChild(linkElement);
+  });
+}
+
+// Modify existing functions to save after changes
+const originalSaveProfile = saveProfile;
+saveProfile = function() {
+  originalSaveProfile();
+  saveToLocalStorage();
+}
+
+const originalAddNewLink = addNewLink;
+addNewLink = function() {
+  originalAddNewLink();
+  saveToLocalStorage();
+}
+
+const originalSaveLinkChanges = saveLinkChanges;
+saveLinkChanges = function(linkType, button) {
+  originalSaveLinkChanges(linkType, button);
+  saveToLocalStorage();
+}
+
+const originalDeleteLink = deleteLink;
+deleteLink = function(linkType, button) {
+  originalDeleteLink(linkType, button);
+  saveToLocalStorage();
+}
+
+function toggleForm(formId) {
+  document.querySelectorAll('.edit-form').forEach(form => {
+    if(form.id !== formId) {
+      form.classList.remove('active');
+    }
+  });
+  const form = document.getElementById(formId);
+  form.classList.toggle('active');
+}
+
+function saveProfile() {
+  const displayName = document.getElementById('displayName').value;
+  const bio = document.getElementById('bio').value;
+  const profilePic = document.getElementById('profilePic').files[0];
+
+  document.getElementById('profileName').textContent = displayName;
+  document.getElementById('profileBio').textContent = bio;
+
+  if(profilePic) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('profileImage').src = e.target.result;
+    }
+    reader.readAsDataURL(profilePic);
+  }
+
+  document.getElementById('profile-form').classList.remove('active');
+  alert('Perfil atualizado com sucesso!');
+}
+
+function addNewLink() {
+  const linkText = document.getElementById('newLinkText').value;
+  const linkUrl = document.getElementById('newLinkUrl').value;
+  const linkColor = document.getElementById('newLinkColor').value;
+  const linkIcon = document.getElementById('newLinkIcon').value;
+
+  if(!linkText || !linkUrl) {
+    alert('Por favor, preencha todos os campos!');
+    return;
+  }
+
+  // Create new link
+  const newLink = document.createElement('a');
+  newLink.href = linkUrl;
+  newLink.className = 'link-item';
+  newLink.style.backgroundColor = linkColor;
+  newLink.innerHTML = `
+    ${linkText}
+    <svg class="link-icon" viewBox="0 0 24 24" fill="white">
+      ${getIconPath(linkIcon)}
+    </svg>
+  `;
+
+  document.getElementById('linksContainer').appendChild(newLink);
+  
+  // Add edit option to sidebar
+  const editOption = document.createElement('div');
+  editOption.className = 'edit-option';
+  editOption.setAttribute('onclick', `showLinkEditor('${linkText.toLowerCase()}')`);
+  editOption.textContent = `Editar ${linkText}`;
+  
+  const existingLinksSection = document.querySelector('.sidebar-section:last-child');
+  existingLinksSection.appendChild(editOption);
+
+  document.getElementById('link-form').classList.remove('active');
+  
+  // Clear form
+  document.getElementById('newLinkText').value = '';
+  document.getElementById('newLinkUrl').value = '';
+  document.getElementById('newLinkColor').value = '#6b48ff';
+}
+
+function showLinkEditor(linkType) {
+  const links = document.querySelectorAll('.link-item');
+  let currentLink;
+  links.forEach(link => {
+    if(link.textContent.trim().toLowerCase().includes(linkType.toLowerCase())) {
+      currentLink = link;
+    }
+  });
+
+  if(!currentLink) return;
+
+  const editorHtml = `
+    <div class="edit-form active">
+      <input type="text" class="edit-link-text" placeholder="Texto do Link" value="${currentLink.textContent.trim()}">
+      <input type="url" class="edit-link-url" placeholder="URL do Link" value="${currentLink.href}">
+      <input type="color" class="edit-link-color" value="${rgb2hex(currentLink.style.backgroundColor || '#6b48ff')}">
+      <select class="edit-link-icon">
+        <option value="instagram" ${linkType === 'instagram' ? 'selected' : ''}>Ícone do Instagram</option>
+        <option value="youtube" ${linkType === 'youtube' ? 'selected' : ''}>Ícone do YouTube</option>
+        <option value="whatsapp" ${linkType === 'whatsapp' ? 'selected' : ''}>Ícone do WhatsApp</option>
+      </select>
+      <button class="btn" onclick="saveLinkChanges('${linkType}', this)">Salvar Alterações</button>
+      <button class="btn" style="background: #ff4444" onclick="deleteLink('${linkType}', this)">Excluir Link</button>
+    </div>
+  `;
+  
+  const linkEditor = document.querySelector(`[onclick="showLinkEditor('${linkType}')"]`);
+  const existingForm = linkEditor.nextElementSibling;
+  if (existingForm && existingForm.classList.contains('edit-form')) {
+    existingForm.remove();
+  } else {
+    linkEditor.insertAdjacentHTML('afterend', editorHtml);
+  }
+}
+
+function saveLinkChanges(linkType, button) {
+  const form = button.closest('.edit-form');
+  const newText = form.querySelector('.edit-link-text').value;
+  const newUrl = form.querySelector('.edit-link-url').value;
+  const newColor = form.querySelector('.edit-link-color').value;
+  const newIcon = form.querySelector('.edit-link-icon').value;
+
+  const links = document.querySelectorAll('.link-item');
+  links.forEach(link => {
+    if(link.textContent.trim().toLowerCase().includes(linkType.toLowerCase())) {
+      link.href = newUrl;
+      link.style.backgroundColor = newColor;
+      link.innerHTML = `
+        ${newText}
+        <svg class="link-icon" viewBox="0 0 24 24" fill="white">
+          ${getIconPath(newIcon)}
+        </svg>
+      `;
+    }
+  });
+
+  form.remove();
+  alert('Alterações salvas com sucesso!');
+}
+
+function deleteLink(linkType, button) {
+  if(confirm('Tem certeza que deseja excluir este link?')) {
+    // Remove the link
+    const links = document.querySelectorAll('.link-item');
+    links.forEach(link => {
+      if(link.textContent.trim().toLowerCase().includes(linkType.toLowerCase())) {
+        link.remove();
+      }
+    });
+    
+    // Remove the edit option from sidebar
+    const editOption = document.querySelector(`[onclick="showLinkEditor('${linkType}')"]`);
+    if(editOption) {
+      editOption.remove();
+    }
+    
+    // Remove the edit form if it exists
+    const form = button.closest('.edit-form');
+    if(form) {
+      form.remove();
+    }
+    
+    alert('Link excluído com sucesso!');
+  }
+}
+
+function rgb2hex(rgb) {
+  if(rgb.startsWith('#')) return rgb;
+  
+  rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+  if(!rgb) return '#6b48ff';
+  
+  function hex(x) {
+    return ("0" + parseInt(x).toString(16)).slice(-2);
+  }
+  return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+}
+
+document.querySelectorAll('.link-item').forEach(link => {
+  link.addEventListener('click', (e) => {
+    link.style.transform = 'scale(0.98)';
+    setTimeout(() => {
+      link.style.transform = '';
+    }, 100);
+  });
+});
+
+function toggleMenu() {
+  const sidebar = document.querySelector('.sidebar');
+  sidebar.classList.toggle('active');
+}
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+  const sidebar = document.querySelector('.sidebar');
+  const menuToggle = document.querySelector('.menu-toggle');
+  
+  if (window.innerWidth <= 768) {
+    if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+      sidebar.classList.remove('active');
+    }
+  }
+});
+
+// Handle window resize
+window.addEventListener('resize', () => {
+  const sidebar = document.querySelector('.sidebar');
+  if (window.innerWidth > 768) {
+    sidebar.classList.remove('active');
+  }
+});
+</script>
+</body>
+</html>
