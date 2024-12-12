@@ -1,4 +1,4 @@
-// v3
+// v4
 
 function pixelsToCm(pixels) {
     return Math.round((pixels / 37.8) * 10) / 10;
@@ -669,14 +669,16 @@ function openPaintingModal(imageObject) {
     const tempImg = new Image();
     tempImg.onload = function() {
         // Set canvas size to match image
-        paintingCanvas.width = tempImg.width;
-        paintingCanvas.height = tempImg.height;
+        paintingCanvas.width = 600;
+        paintingCanvas.height = 600;
 
         // Clear canvas first
         ctx.clearRect(0, 0, paintingCanvas.width, paintingCanvas.height);
 
-        // Draw image
-        ctx.drawImage(tempImg, 0, 0);
+        // Draw image centered
+        const x = (paintingCanvas.width - tempImg.width) / 2;
+        const y = (paintingCanvas.height - tempImg.height) / 2;
+        ctx.drawImage(tempImg, x, y);
 
         // Save original image for eraser functionality
         originalImage = tempImg;
@@ -769,24 +771,6 @@ function openPaintingModal(imageObject) {
     document.getElementById('closePaintingModal').onclick = function() {
         modal.style.display = 'none';
     };
-
-    // Adjust modal size and position
-    const modalRect = modal.getBoundingClientRect();
-    const windowHeight = window.innerHeight;
-    const windowWidth = window.innerWidth;
-
-    if (modalRect.height > windowHeight) {
-        modal.style.height = `${windowHeight * 0.8}px`; // 80% of the window height
-        modal.style.overflowY = 'auto';
-    }
-
-    if (modalRect.width > windowWidth) {
-        modal.style.width = `${windowWidth * 0.8}px`; // 80% of the window width
-        modal.style.overflowX = 'auto';
-    }
-
-    modal.style.top = `${(windowHeight - modalRect.height) / 2}px`;
-    modal.style.left = `${(windowWidth - modalRect.width) / 2}px`;
 }
 
 // Show/hide image menu based on selection
