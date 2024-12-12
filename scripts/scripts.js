@@ -1,3 +1,5 @@
+//v7
+
 function pixelsToCm(pixels) {
     return Math.round((pixels / 37.8) * 10) / 10;
 }
@@ -1122,6 +1124,417 @@ function updateRulers() {
         }
     }
 }
+
+paintBucketTool.addEventListener('click', () => {
+                const activeObject = canvas.getActiveObject();
+                if (!activeObject) {
+                    alert('Selecione um objeto para editar');
+                    return;
+                }
+
+                // Set fixed dimensions for the canvas
+                paintBucketCanvas.width = 500;
+                paintBucketCanvas.height = 500;
+
+                // Calculate scaling to fit the image within 500x500
+                const scale = Math.min(
+                    500 / activeObject.width,
+                    500 / activeObject.height
+                );
+
+                // Clear the canvas
+                paintBucketCtx.clearRect(0, 0, 500, 500);
+
+                // Center the image
+                const scaledWidth = activeObject.width * scale;
+                const scaledHeight = activeObject.height * scale;
+                const offsetX = (500 - scaledWidth) / 2;
+                const offsetY = (500 - scaledHeight) / 2;
+
+                if (activeObject.type === 'image') {
+                    paintBucketCtx.drawImage(
+                        activeObject.getElement(),
+                        offsetX,
+                        offsetY,
+                        scaledWidth,
+                        scaledHeight
+                    );
+                } else {
+                    paintBucketCtx.fillStyle = 'white';
+                    paintBucketCtx.fillRect(0, 0, 500, 500);
+                }
+
+                document.getElementById('imageMenu').style.display = 'none';
+                paintBucketModal.style.display = 'block';
+            });
+
+            toleranceInput.addEventListener('input', () => {
+                toleranceValue.textContent = toleranceInput.value;
+            });
+
+            function getPixel(imageData, x, y) {
+                const index = (y * imageData.width + x) * 4;
+                return {
+                    r: imageData.data[index],
+                    g: imageData.data[index + 1],
+                    b: imageData.data[index + 2],
+                    a: imageData.data[index + 3]
+                };
+            }
+
+            function setPixel(imageData, x, y, color) {
+                const index = (y * imageData.width + x) * 4;
+                imageData.data[index] = color.r;
+                imageData.data[index + 1] = color.g;
+                imageData.data[index + 2] = color.b;
+                imageData.data[index + 3] = color.a;
+            }
+
+            function colorMatch(c1, c2, tolerance) {
+                return Math.abs(c1.r - c2.r) <= tolerance &&
+                       Math.abs(c1.g - c2.g) <= tolerance &&
+                       Math.abs(c1.b - c2.b) <= tolerance;
+            }
+
+            function floodFill(imageData, startX, startY, fillColor, tolerance) {
+                const width = imageData.width;
+                const height = imageData.height;
+                const visited = new Uint8Array(width * height);
+                const queue = [];
+
+                const targetColor = getPixel(imageData, startX, startY);
+                const fillColorRGB = {
+                    r: parseInt(fillColor.slice(1,3), 16),
+                    g: parseInt(fillColor.slice(3,5), 16),
+                    b: parseInt(fillColor.slice(5,7), 16),
+                    a: 255
+                };
+
+                // If target color is the same as fill color, return
+                if (colorMatch(targetColor, fillColorRGB, 0)) {
+                    return;
+                }
+
+                queue.push([startX, startY]);
+                visited[startY * width + startX] = 1;
+
+                const processChunk = () => {
+                    let processCount = 0;
+                    const chunkSize = 1000; // Process 1000 pixels per chunk
+
+                    while (queue.length > 0 && processCount < chunkSize) {
+                        const [x, y] = queue.shift();
+                        const currentPixel = getPixel(imageData, x, y);
+
+                        if (colorMatch(currentPixel, targetColor, tolerance)) {
+                            setPixel(imageData, x, y, fillColorRGB);
+
+                            // Check neighboring pixels
+                            const neighbors = [
+                                [x - 1, y], [x + 1, y],
+                                [x, y - 1], [x, y + 1]
+                            ];
+
+                            for (const [nx, ny] of neighbors) {
+                                if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                                    const index = ny * width + nx;
+                                    if (!visited[index]) {
+                                        visited[index] = 1;
+                                        queue.push([nx, ny]);
+                                    }
+                                }
+                            }
+                        }
+                        processCount++;
+                    }
+
+                    // Update canvas with current progress
+                    paintBucketCtx.putImageData(imageData, 0, 0);
+
+                    // Continue processing if there are more pixels in queue
+                    if (queue.length > 0) {
+                        requestAnimationFrame(processChunk);
+                    }
+                };
+
+                // Start processing
+                requestAnimationFrame(processChunk);
+            }
+
+            paintBucketCanvas.addEventListener('click', (e) => {
+                const rect = paintBucketCanvas.getBoundingClientRect();
+                const x = Math.floor((e.clientX - rect.left) * (paintBucketCanvas.width / rect.width));
+                const y = Math.floor((e.clientY - rect.top) * (paintBucketCanvas.height / rect.height));
+
+                const imageData = paintBucketCtx.getImageData(0, 0, paintBucketCanvas.width, paintBucketCanvas.height);
+                floodFill(imageData, x, y, fillColorInput.value, parseInt(toleranceInput.value));
+            });
+
+            closePaintBucketModal.addEventListener('click', () => {
+                paintBucketModal.style.display = 'none';
+                document.getElementById('imageMenu').style.display = 'flex';
+            });
+
+            savePaintBucketBtn.addEventListener('click', () => {
+                const activeObject = canvas.getActiveObject();
+                if (activeObject) {
+                    // Get the original dimensions
+                    const originalWidth = activeObject.width;
+                    const originalHeight = activeObject.height;
+                    
+                    fabric.Image.fromURL(paintBucketCanvas.toDataURL(), (img) => {
+                        // Scale the image back to its original dimensions
+                        img.scaleToWidth(activeObject.getScaledWidth());
+                        img.scaleToHeight(activeObject.getScaledHeight());
+                        
+                        img.set({
+                            left: activeObject.left,
+                            top: activeObject.top,
+                            angle: activeObject.angle
+                        });
+                        
+                        canvas.remove(activeObject);
+                        canvas.add(img);
+                        canvas.setActiveObject(img);
+                        canvas.renderAll();
+                        paintBucketModal.style.display = 'none';
+                        document.getElementById('imageMenu').style.display = 'flex';
+                    });
+                }
+            });
+        })();
+
+        (function() {
+            const cropTool = document.getElementById('cropTool');
+            const cropModal = document.getElementById('cropModal');
+            const closeCropModal = document.getElementById('closeCropModal');
+            const saveCropBtn = document.getElementById('saveCropBtn');
+            const cropImage = document.getElementById('cropImage');
+
+            let cropper = null;
+
+            cropTool.addEventListener('click', () => {
+                const activeObject = canvas.getActiveObject();
+                if (!activeObject || activeObject.type !== 'image') {
+                    alert('Selecione uma imagem para recortar');
+                    return;
+                }
+
+                // Get the image source from the active object
+                const imgElement = activeObject.getElement();
+                cropImage.src = imgElement.src;
+
+                document.getElementById('imageMenu').style.display = 'none';
+                cropModal.style.display = 'block';
+
+                // Initialize cropper after image is loaded
+                cropImage.onload = () => {
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    cropper = new Cropper(cropImage, {
+                        viewMode: 1,
+                        dragMode: 'move',
+                        aspectRatio: NaN,
+                        autoCropArea: 1,
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: false,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
+                        minContainerWidth: 500,
+                        minContainerHeight: 500,
+                        maxContainerWidth: 500,
+                        maxContainerHeight: 500,
+                    });
+                };
+            });
+
+            closeCropModal.addEventListener('click', () => {
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+                cropModal.style.display = 'none';
+                document.getElementById('imageMenu').style.display = 'flex';
+            });
+
+            saveCropBtn.addEventListener('click', () => {
+                if (!cropper) return;
+
+                const croppedCanvas = cropper.getCroppedCanvas();
+                const activeObject = canvas.getActiveObject();
+
+                if (activeObject && croppedCanvas) {
+                    fabric.Image.fromURL(croppedCanvas.toDataURL(), (img) => {
+                        // Calculate scaling to maintain relative size
+                        const scale = activeObject.getScaledWidth() / activeObject.width;
+                        img.scale(scale);
+                        
+                        img.set({
+                            left: activeObject.left,
+                            top: activeObject.top,
+                            angle: activeObject.angle
+                        });
+                        
+                        canvas.remove(activeObject);
+                        canvas.add(img);
+                        canvas.setActiveObject(img);
+                        canvas.renderAll();
+                        
+                        cropper.destroy();
+                        cropper = null;
+                        cropModal.style.display = 'none';
+                        document.getElementById('imageMenu').style.display = 'flex';
+                    });
+                }
+            });
+        })();
+
+        // Function for painting modal
+        function openPaintingModal(imageObject) {
+            const modal = document.getElementById('paintingModal');
+            document.getElementById('imageMenu').style.display = 'none';
+            modal.style.display = 'block';
+
+            const paintingCanvas = document.getElementById('paintingCanvas');
+            const ctx = paintingCanvas.getContext('2d');
+
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+
+            // Load the image data
+            const tempImg = new Image();
+            tempImg.onload = function() {
+                // Store original dimensions
+                const originalWidth = tempImg.width;
+                const originalHeight = tempImg.height;
+                paintingCanvas.dataset.originalWidth = originalWidth;
+                paintingCanvas.dataset.originalHeight = originalHeight;
+
+                // Calculate display dimensions while maintaining aspect ratio
+                const maxHeight = 500;
+                const maxWidth = window.innerWidth * 0.8;
+                let displayWidth = originalWidth;
+                let displayHeight = originalHeight;
+
+                // Calculate scale to fit within bounds
+                const scale = Math.min(maxWidth / originalWidth, maxHeight / originalHeight);
+                displayWidth = originalWidth * scale;
+                displayHeight = originalHeight * scale;
+
+                // Set the display size of the canvas using CSS
+                paintingCanvas.style.width = `${displayWidth}px`;
+                paintingCanvas.style.height = `${displayHeight}px`;
+
+                // Set the internal canvas size to match original image dimensions
+                paintingCanvas.width = originalWidth;
+                paintingCanvas.height = originalHeight;
+
+                // Clear canvas and draw image at original size
+                ctx.clearRect(0, 0, originalWidth, originalHeight);
+
+                // Enable transparency
+                ctx.globalCompositeOperation = 'source-over';
+                // Clear the canvas with transparent background
+                ctx.clearRect(0, 0, originalWidth, originalHeight);
+                // Draw the image
+                ctx.drawImage(tempImg, 0, 0, originalWidth, originalHeight);
+            };
+            tempImg.src = imageObject.toDataURL();
+
+            // Drawing functions
+            function startDrawing(e) {
+                isDrawing = true;
+                const pos = getMousePos(paintingCanvas, e);
+                [lastX, lastY] = [pos.x, pos.y];
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                
+                const pos = getMousePos(paintingCanvas, e);
+                const brushSize = parseInt(document.getElementById('brushSize').value);
+                
+                ctx.lineWidth = brushSize;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                // Set mode based on active tool
+                if (document.getElementById('eraserTool').classList.contains('active')) {
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.strokeStyle = 'rgba(0,0,0,1)';
+                } else {
+                    ctx.globalCompositeOperation = 'source-over';
+                    ctx.strokeStyle = document.getElementById('brushColor').value;
+                }
+
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+
+                [lastX, lastY] = [pos.x, pos.y];
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+            }
+
+            function getMousePos(canvas, evt) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                return {
+                    x: (evt.clientX - rect.left) * scaleX,
+                    y: (evt.clientY - rect.top) * scaleY
+                };
+            }
+
+            // Add event listeners
+            paintingCanvas.addEventListener('mousedown', startDrawing);
+            paintingCanvas.addEventListener('mousemove', draw);
+            paintingCanvas.addEventListener('mouseup', stopDrawing);
+            paintingCanvas.addEventListener('mouseout', stopDrawing);
+
+            // Save button handler
+            document.getElementById('savePaintingBtn').onclick = function() {
+                // Ensure we save with transparency
+                const dataURL = paintingCanvas.toDataURL('image/png');
+                fabric.Image.fromURL(dataURL, function(img) {
+                    // Maintain original dimensions and position
+                    img.scaleToWidth(imageObject.getScaledWidth());
+                    img.scaleToHeight(imageObject.getScaledHeight());
+                    
+                    img.set({
+                        left: imageObject.left,
+                        top: imageObject.top,
+                        angle: imageObject.angle,
+                        filename: imageObject.filename
+                    });
+
+                    canvas.remove(imageObject);
+                    canvas.add(img);
+                    canvas.renderAll();
+                    modal.style.display = 'none';
+                    document.getElementById('imageMenu').style.display = 'flex';
+                });
+            };
+
+            // Close modal
+            document.getElementById('closePaintingModal').onclick = function() {
+                modal.style.display = 'none';
+                document.getElementById('imageMenu').style.display = 'flex';
+                // Remove event listeners
+                paintingCanvas.removeEventListener('mousedown', startDrawing);
+                paintingCanvas.removeEventListener('mousemove', draw);
+                paintingCanvas.removeEventListener('mouseup', stopDrawing);
+                paintingCanvas.removeEventListener('mouseout', stopDrawing);
+            };
+        }
 
 // Initial ruler update
 updateRulers();
