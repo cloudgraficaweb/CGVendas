@@ -1,4 +1,4 @@
-// v5
+// v1
 
 function pixelsToCm(pixels) {
     return Math.round((pixels / 37.8) * 10) / 10;
@@ -185,6 +185,35 @@ outerCanvas.on('mouse:move', function(opt) {
 
 outerCanvas.on('mouse:up', function() {
     isDragging = false;
+});
+
+// Modified file upload handling for multiple files
+document.getElementById('fileInput').addEventListener('change', function(e) {
+    const files = Array.from(e.target.files);
+
+    files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            fabric.Image.fromURL(event.target.result, function(img) {
+                const scale = Math.min(
+                    (canvas.width) / img.width,
+                    (canvas.height) / img.height
+                ) * 0.8;
+
+                img.scale(scale);
+                img.set({
+                    left: (canvas.width - img.width * scale) / 2,
+                    top: (canvas.height - img.height * scale) / 2,
+                    filename: file.name
+                });
+
+                canvas.add(img);
+                canvas.requestRenderAll();
+                updateLayersList();
+            });
+        };
+        reader.readAsDataURL(file);
+    });
 });
 
 // Layers list with drag and drop
@@ -669,16 +698,14 @@ function openPaintingModal(imageObject) {
     const tempImg = new Image();
     tempImg.onload = function() {
         // Set canvas size to match image
-        paintingCanvas.width = 600;
-        paintingCanvas.height = 600;
+        paintingCanvas.width = tempImg.width;
+        paintingCanvas.height = tempImg.height;
 
         // Clear canvas first
         ctx.clearRect(0, 0, paintingCanvas.width, paintingCanvas.height);
 
-        // Draw image centered
-        const x = (paintingCanvas.width - tempImg.width) / 2;
-        const y = (paintingCanvas.height - tempImg.height) / 2;
-        ctx.drawImage(tempImg, x, y);
+        // Draw image
+        ctx.drawImage(tempImg, 0, 0);
 
         // Save original image for eraser functionality
         originalImage = tempImg;
@@ -772,6 +799,116 @@ function openPaintingModal(imageObject) {
         modal.style.display = 'none';
     };
 }
+
+// Export functions
+const exportModal = document.getElementById('exportModal');
+const exportBtn = document.getElementById('exportBtn');
+const dpiInput = document.getElementById('dpiInput');
+
+// Show modal
+exportBtn.onclick = () => exportModal.style.display = 'flex';
+
+// Close modal when clicking outside
+exportModal.onclick = (e) => {
+    if (e.target === exportModal) {
+        exportModal.style.display = 'none';
+    }
+};
+
+document.getElementById('pngBtn').onclick = () => {
+    downloadCanvas('png', true);
+};
+
+document.getElementById('jpgBtn').onclick = () => {
+    downloadCanvas('jpeg', false);
+};
+
+document.getElementById('pdfBtn').onclick = async () => {
+    const { jsPDF } = window.jspdf;
+
+    // Get canvas dimensions in centimeters
+    const widthInCm = canvas.width / 37.8;  // Convert pixels to cm
+    const heightInCm = canvas.height / 37.8; // Convert pixels to cm
+
+    const pdf = new jsPDF({
+        orientation: widthInCm > heightInCm ? 'landscape' : 'portrait',
+        unit: 'mm',
+        format: [widthInCm * 10, heightInCm * 10] // Convert cm to mm for jsPDF
+    });
+
+    const imgData = getCanvasDataURL('jpeg', false);
+
+    // Add image maintaining size in millimeters
+    pdf.addImage(imgData, 'JPEG', 0, 0, widthInCm * 10, heightInCm * 10); // Convert cm to mm
+    pdf.save('export.pdf');
+};
+
+function getCanvasDataURL(format, transparent) {
+    const dpi = 600; // Fixed at 600 DPI
+    const scale = dpi / 96; // Standard screen DPI is 96
+
+    // Create a temporary canvas at the scaled size
+    const tempCanvas = document.createElement('canvas');
+    const scaledWidth = Math.ceil(canvas.width * scale);
+    const scaledHeight = Math.ceil(canvas.height * scale);
+    tempCanvas.width = scaledWidth;
+    tempCanvas.height = scaledHeight;
+    const ctx = tempCanvas.getContext('2d');
+
+    // If not transparent or if JPEG, fill white background
+    if (!transparent || format === 'jpeg') {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    }
+
+    // Apply the scale transform
+    ctx.scale(scale, scale);
+
+    // Render each object manually
+    canvas.getObjects().forEach(obj => {
+        const objLeft = obj.left || 0;
+        const objTop = obj.top || 0;
+
+        ctx.save();
+
+        // Handle rotation around object center
+        const centerX = objLeft + (obj.width * obj.scaleX) / 2;
+        const centerY = objTop + (obj.height * obj.scaleY) / 2;
+
+        ctx.translate(centerX, centerY);
+        ctx.rotate((obj.angle || 0) * Math.PI / 180);
+        ctx.translate(-centerX, -centerY);
+
+        // Draw the object
+        if (obj.type === 'image') {
+            ctx.drawImage(
+                obj._element,
+                objLeft,
+                objTop,
+                obj.width * obj.scaleX,
+                obj.height * obj.scaleY
+            );
+        } else {
+            obj.render(ctx);
+        }
+
+        ctx.restore();
+    });
+
+    return tempCanvas.toDataURL(`image/${format}`, 1.0);
+}
+
+function downloadCanvas(format, transparent) {
+    const link = document.createElement('a');
+    link.href = getCanvasDataURL(format, transparent);
+    link.download = `export.${format}`;
+    link.click();
+}
+
+// Add jsPDF library for PDF export
+const script = document.createElement('script');
+script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+document.head.appendChild(script);
 
 // Show/hide image menu based on selection
 canvas.on('selection:created', function(e) {
