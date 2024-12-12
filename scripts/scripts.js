@@ -1113,3 +1113,213 @@ updateRulers();
 
 // Add window resize handler for rulers
 window.addEventListener('resize', updateRulers);
+
+// Balde de Tinta functionality
+(function() {
+    const paintBucketTool = document.getElementById('paintBucketTool');
+    const paintBucketModal = document.getElementById('paintBucketModal');
+    const closePaintBucketModal = document.getElementById('closePaintBucketModal');
+    const paintBucketCanvas = document.getElementById('paintBucketCanvas');
+    const fillColorInput = document.getElementById('fillColor');
+    const toleranceInput = document.getElementById('tolerance');
+    const toleranceValue = document.getElementById('toleranceValue');
+    const savePaintBucketBtn = document.getElementById('savePaintBucketBtn');
+
+    let paintBucketCtx = paintBucketCanvas.getContext('2d');
+    let activeObject = null;
+
+    paintBucketTool.addEventListener('click', () => {
+        const activeObject = canvas.getActiveObject();
+        if (!activeObject) {
+            alert('Selecione um objeto para editar');
+            return;
+        }
+
+        // Clone the active object to the paint bucket canvas
+        paintBucketCanvas.width = activeObject.width * activeObject.scaleX;
+        paintBucketCanvas.height = activeObject.height * activeObject.scaleY;
+
+        // Clear the canvas
+        paintBucketCtx.clearRect(0, 0, paintBucketCanvas.width, paintBucketCanvas.height);
+
+        // Draw the object
+        if (activeObject.type === 'image') {
+            paintBucketCtx.drawImage(activeObject.getElement(), 0, 0, paintBucketCanvas.width, paintBucketCanvas.height);
+        } else {
+            paintBucketCtx.fillStyle = 'white';
+            paintBucketCtx.fillRect(0, 0, paintBucketCanvas.width, paintBucketCanvas.height);
+        }
+
+        paintBucketModal.style.display = 'block';
+    });
+
+    toleranceInput.addEventListener('input', () => {
+        toleranceValue.textContent = toleranceInput.value;
+    });
+
+    function getPixel(imageData, x, y) {
+        const index = (y * imageData.width + x) * 4;
+        return {
+            r: imageData.data[index],
+            g: imageData.data[index + 1],
+            b: imageData.data[index + 2],
+            a: imageData.data[index + 3]
+        };
+    }
+
+    function setPixel(imageData, x, y, color) {
+        const index = (y * imageData.width + x) * 4;
+        imageData.data[index] = color.r;
+        imageData.data[index + 1] = color.g;
+        imageData.data[index + 2] = color.b;
+        imageData.data[index + 3] = color.a;
+    }
+
+    function colorMatch(c1, c2, tolerance) {
+        return Math.abs(c1.r - c2.r) <= tolerance &&
+               Math.abs(c1.g - c2.g) <= tolerance &&
+               Math.abs(c1.b - c2.b) <= tolerance;
+    }
+
+    function floodFill(imageData, startX, startY, fillColor, tolerance) {
+        const pixelsToCheck = [];
+        const targetColor = getPixel(imageData, startX, startY);
+        const fillColorRGB = {
+            r: parseInt(fillColor.slice(1,3), 16),
+            g: parseInt(fillColor.slice(3,5), 16),
+            b: parseInt(fillColor.slice(5,7), 16),
+            a: 255
+        };
+
+        pixelsToCheck.push([startX, startY]);
+
+        while (pixelsToCheck.length > 0) {
+            const [x, y] = pixelsToCheck.pop();
+            const currentPixel = getPixel(imageData, x, y);
+
+            if (!colorMatch(currentPixel, targetColor, tolerance)) continue;
+
+            setPixel(imageData, x, y, fillColorRGB);
+
+            if (x > 0) pixelsToCheck.push([x - 1, y]);
+            if (x < imageData.width - 1) pixelsToCheck.push([x + 1, y]);
+            if (y > 0) pixelsToCheck.push([x, y - 1]);
+            if (y < imageData.height - 1) pixelsToCheck.push([x, y + 1]);
+        }
+    }
+
+    paintBucketCanvas.addEventListener('click', (e) => {
+        const rect = paintBucketCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const imageData = paintBucketCtx.getImageData(0, 0, paintBucketCanvas.width, paintBucketCanvas.height);
+        floodFill(imageData, Math.floor(x), Math.floor(y), fillColorInput.value, parseInt(toleranceInput.value));
+        paintBucketCtx.putImageData(imageData, 0, 0);
+    });
+
+    closePaintBucketModal.addEventListener('click', () => {
+        paintBucketModal.style.display = 'none';
+    });
+
+    savePaintBucketBtn.addEventListener('click', () => {
+        const activeObject = canvas.getActiveObject();
+        if (activeObject) {
+            fabric.Image.fromURL(paintBucketCanvas.toDataURL(), (img) => {
+                img.set({
+                    left: activeObject.left,
+                    top: activeObject.top,
+                    scaleX: activeObject.scaleX,
+                    scaleY: activeObject.scaleY,
+                    angle: activeObject.angle
+                });
+                canvas.remove(activeObject);
+                canvas.add(img);
+                canvas.setActiveObject(img);
+                canvas.renderAll();
+                paintBucketModal.style.display = 'none';
+            });
+        }
+    });
+})();
+
+// Recortar functionality
+(function() {
+    const cropTool = document.getElementById('cropTool');
+    const cropModal = document.getElementById('cropModal');
+    const closeCropModal = document.getElementById('closeCropModal');
+    const saveCropBtn = document.getElementById('saveCropBtn');
+    const cropImage = document.getElementById('cropImage');
+
+    let cropper = null;
+
+    cropTool.addEventListener('click', () => {
+        const activeObject = canvas.getActiveObject();
+        if (!activeObject || activeObject.type !== 'image') {
+            alert('Selecione uma imagem para recortar');
+            return;
+        }
+
+        // Get the image source from the active object
+        const imgElement = activeObject.getElement();
+        cropImage.src = imgElement.src;
+
+        cropModal.style.display = 'block';
+
+        // Initialize cropper after image is loaded
+        cropImage.onload = () => {
+            if (cropper) {
+                cropper.destroy();
+            }
+            cropper = new Cropper(cropImage, {
+                viewMode: 1,
+                dragMode: 'move',
+                aspectRatio: NaN,
+                autoCropArea: 1,
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: false,
+                cropBoxMovable: true,
+                cropBoxResizable: true,
+                toggleDragModeOnDblclick: false,
+            });
+        };
+    });
+
+    closeCropModal.addEventListener('click', () => {
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+        cropModal.style.display = 'none';
+    });
+
+    saveCropBtn.addEventListener('click', () => {
+        if (!cropper) return;
+
+        const croppedCanvas = cropper.getCroppedCanvas();
+        const activeObject = canvas.getActiveObject();
+
+        if (activeObject && croppedCanvas) {
+            fabric.Image.fromURL(croppedCanvas.toDataURL(), (img) => {
+                img.set({
+                    left: activeObject.left,
+                    top: activeObject.top,
+                    scaleX: activeObject.scaleX,
+                    scaleY: activeObject.scaleY,
+                    angle: activeObject.angle
+                });
+                canvas.remove(activeObject);
+                canvas.add(img);
+                canvas.setActiveObject(img);
+                canvas.renderAll();
+
+                // Close modal and cleanup
+                cropper.destroy();
+                cropper = null;
+                cropModal.style.display = 'none';
+            });
+        }
+    });
+})();
