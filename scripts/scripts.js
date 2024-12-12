@@ -1,4 +1,4 @@
-// v4
+// v5
 
 function pixelsToCm(pixels) {
     return Math.round((pixels / 37.8) * 10) / 10;
