@@ -696,8 +696,8 @@ function openPaintingModal(imageObject) {
     const tempImg = new Image();
     tempImg.onload = function() {
         // Set canvas size to match image while maintaining aspect ratio
-        const maxHeight = 500;
-        const maxWidth = 500;
+        const maxHeight = 600;
+        const maxWidth = modal.offsetWidth - 40; // Subtract padding and borders
         let width = tempImg.width;
         let height = tempImg.height;
 
@@ -1153,8 +1153,8 @@ window.addEventListener('resize', updateRulers);
         const tempImg = new Image();
         tempImg.onload = function() {
             // Set canvas size to match image while maintaining aspect ratio
-            const maxHeight = 500;
-            const maxWidth = 500;
+            const maxHeight = 600;
+            const maxWidth = paintBucketModal.offsetWidth - 40; // Subtract padding and borders
             let width = tempImg.width;
             let height = tempImg.height;
 
@@ -1303,8 +1303,8 @@ window.addEventListener('resize', updateRulers);
             }
 
             // Set image size to match modal while maintaining aspect ratio
-            const maxHeight = 500;
-            const maxWidth = 500;
+            const maxHeight = 600;
+            const maxWidth = cropModal.offsetWidth - 40; // Subtract padding and borders
             let width = imgElement.width;
             let height = imgElement.height;
 
