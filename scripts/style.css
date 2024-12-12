@@ -1,0 +1,411 @@
+.content-wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .menu-left {
+            width: 150px;
+            background-color: #0f3460;
+            height: 100%;
+            padding: 20px;
+            color: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+        }
+
+        .menu-right {
+            width: 250px;
+            background-color: #0f3460;
+            height: 100%;
+            padding: 20px;
+            color: white;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            flex: 1;
+            background-color: #16213e;
+            position: relative;
+            overflow: hidden;
+            padding-left: 15px; /* Add space for vertical ruler */
+            padding-top: 15px; /* Add space for horizontal ruler */
+        }
+
+        .canvas-wrapper {
+            position: absolute;
+            transform-origin: center center;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #outer-canvas {
+            background-color: #16213e;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .upload-btn {
+            background-color: #1a4b8c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            height: 36px;
+        }
+
+        .upload-btn:hover {
+            background-color: #2861b3;
+        }
+
+        .dimensions-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dimension-label {
+            font-size: 18px;
+            color: white;
+        }
+
+        .dimension-input {
+            width: 70px;
+            height: 30px;
+            padding: 4px 8px;
+            border: 1px solid #2861b3;
+            border-radius: 4px;
+            background: #1a4b8c;
+            color: white;
+            font-size: 14px;
+            -moz-appearance: textfield;
+        }
+
+        .dimension-input::-webkit-inner-spin-button {
+            opacity: 1;
+        }
+
+        .dimension-swap {
+            background-color: #1a4b8c;
+            color: white;
+            border: 1px solid #2861b3;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            height: 30px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dimension-swap:hover,
+        .dimension-input:hover,
+        .upload-btn:hover {
+            background-color: #2861b3;
+        }
+
+        .menu-divider {
+            width: 1px;
+            height: 36px;
+            background-color: #2861b3;
+            margin: 0 10px;
+        }
+
+        .rotate-btn {
+            background-color: #1a4b8c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            height: 36px;
+            margin-left: 10px;
+        }
+
+        .rotate-btn:hover {
+            background-color: #2861b3;
+        }
+
+        .rotate-btn:disabled {
+            background-color: #1a4b8c;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .layers-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 30px); /* Reduce height to make room for margin */
+            margin-bottom: 30px; /* Add margin at the bottom */
+        }
+
+        .layers-list-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px; /* Add margin before the buttons */
+        }
+
+        .layers-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .layers-list li {
+            padding: 10px;
+            border-bottom: 1px solid #2861b3;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .layers-list li:hover {
+            background-color: #1a4b8c;
+        }
+
+        .layers-list li.selected {
+            color: yellow;
+        }
+
+        .layers-list li.over {
+            border-top: 2px solid yellow;
+        }
+
+        .layers-list li.dragging {
+            opacity: 0.5;
+            background-color: #1a4b8c;
+        }
+
+        .layers-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: auto; /* Push to bottom */
+            padding-bottom: 5px; /* Add some padding between buttons and container edge */
+        }
+
+        .layer-btn {
+            flex: 1;
+            background-color: #1a4b8c;
+            color: white;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .layer-btn:hover {
+            background-color: #2861b3;
+        }
+
+        .tool-btn {
+            width: 100%;
+            background-color: #1a4b8c;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .tool-btn:hover {
+            background-color: #2861b3;
+        }
+
+        .tool-btn.active {
+            color: yellow;
+        }
+
+        .menu-left-divider {
+            width: 100%;
+            height: 1px;
+            background-color: #2861b3;
+            margin: 10px 0;
+        }
+
+        .text-controls-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .outline-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #2861b3;
+        }
+
+        .outline-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .outline-toggle input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        #textInput {
+            display: none; /* Hide the text input */
+        }
+
+        .export-btn {
+            background-color: #1a4b8c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            height: 36px;
+            margin-left: auto; /* Push to right */
+        }
+
+        .export-btn:hover {
+            background-color: #2861b3;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #0f3460;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+        }
+
+        .modal-title {
+            color: white;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .dpi-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #2861b3;
+            border-radius: 4px;
+            background: #1a4b8c;
+            color: white;
+        }
+
+        .export-option {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #1a4b8c;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .export-option:hover {
+            background: #2861b3;
+        }
+
+        .ruler {
+            position: absolute;
+            background: #1a4b8c;
+            z-index: 1;
+        }
+
+        .ruler-horizontal {
+            top: 0;
+            left: 15px; /* Make space for vertical ruler */
+            height: 15px;
+            right: 0;
+        }
+
+        .ruler-vertical {
+            left: 0;
+            top: 15px; /* Make space for horizontal ruler */
+            width: 15px;
+            bottom: 0;
+        }
+
+        .ruler-mark {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        #paintBucketCanvas, #cropImage {
+            width: 500px !important;
+            height: 500px !important;
+            object-fit: contain;
+        }
+
+        #paintBucketModal .modal-content, #cropModal .modal-content {
+            width: 500px;
+            height: 500px;
+        }
+
+        #paintBucketModal, #cropModal {
+            width: 540px; /* 500px + padding */
+            height: 600px; /* 500px + header + controls */
+            background: #0f3460;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        .modal-canvas-container {
+            width: 500px;
+            height: 500px;
+            background: #16213e;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #paintingModal {
+            width: auto !important;
+            height: auto !important;
+            max-width: 90vw;
+        }
+
+        #paintingCanvas {
+            max-width: 100%;
+            max-height: 500px;
+            width: auto !important;
+            height: auto !important;
+        }
+
+        .modal-canvas-container {
+            max-height: 500px;
+            overflow: hidden;
+        }
