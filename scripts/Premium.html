@@ -1,4 +1,8 @@
-<html><head><base href=""><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PremiumPlus - Plano Premium para Você</title><style>
+<html><head><base href="." />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PremiumPlus - Plano Premium para Você</title>
+<style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
 :root {
@@ -67,17 +71,17 @@ body {
   overflow: hidden;
 }
 
-.plan-card::before {
-  content: 'PROMOÇÃO';
+.discount-badge {
   position: absolute;
-  top: 20px;
-  right: -35px;
+  top: 10px;
+  right: -30px;
   background: #ff006e;
   color: white;
   padding: 5px 40px;
   transform: rotate(45deg);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .plan-card:hover {
@@ -106,30 +110,10 @@ body {
 }
 
 .original-price {
-  font-size: 1.3rem;
-  color: #888;
   text-decoration: line-through;
+  color: #666;
+  font-size: 1.4rem;
   margin-bottom: 0.5rem;
-}
-
-.future-price {
-  font-size: 1rem;
-  color: #ff006e;
-  font-weight: 600;
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background: rgba(255, 0, 110, 0.1);
-  border-radius: 10px;
-}
-
-.discount {
-  font-size: 1rem;
-  color: #4caf50;
-  font-weight: 600;
-  margin: 0.5rem 0;
-  background: rgba(76, 175, 80, 0.1);
-  padding: 0.5rem;
-  border-radius: 10px;
 }
 
 .plan-button {
@@ -271,63 +255,58 @@ body {
   cursor: pointer;
   font-size: 1.2rem;
 }
-</style></head><body>
+</style>
+</head>
+<body>
   <section class="hero">
     <h1>Escolha seu Plano Premium</h1>
     <div class="plans">
       <div class="plan-card">
         <h3>1 Mês</h3>
         <div class="price-container">
-          <div class="original-price">R$10,00</div>
-          <div class="plan-price">R$5,00</div>
-          <div class="discount">50% OFF até Dez/2024</div>
-          <div class="future-price">Após Jan/2025: R$10,00</div>
+          <div class="plan-price">R$10,00</div>
         </div>
-        <div class="plan-button" onclick="showQRCode('1 Mês', 'R$5,00')">Escolher Agora</div>
+        <div class="plan-button" onclick="showQRCode('1 Mês', 'R$10,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix10.jpeg')">Escolher Agora</div>
       </div>
       <div class="plan-card">
+        <div class="discount-badge">10% OFF</div>
         <h3>3 Meses</h3>
         <div class="price-container">
           <div class="original-price">R$30,00</div>
-          <div class="plan-price">R$15,00</div>
-          <div class="discount">50% OFF até Dez/2024</div>
-          <div class="future-price">Após Jan/2025: R$30,00</div>
+          <div class="plan-price">R$27,00</div>
         </div>
-        <div class="plan-button" onclick="showQRCode('3 Meses', 'R$15,00')">Escolher Agora</div>
+        <div class="plan-button" onclick="showQRCode('3 Meses', 'R$27,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix27.jpeg')">Escolher Agora</div>
       </div>
       <div class="plan-card">
+        <div class="discount-badge">17% OFF</div>
         <h3>6 Meses</h3>
         <div class="price-container">
           <div class="original-price">R$60,00</div>
-          <div class="plan-price">R$30,00</div>
-          <div class="discount">50% OFF até Dez/2024</div>
-          <div class="future-price">Após Jan/2025: R$60,00</div>
+          <div class="plan-price">R$49,00</div>
         </div>
-        <div class="plan-button" onclick="showQRCode('6 Meses', 'R$30,00')">Escolher Agora</div>
+        <div class="plan-button" onclick="showQRCode('6 Meses', 'R$49,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix49.jpeg')">Escolher Agora</div>
       </div>
       <div class="plan-card">
+        <div class="discount-badge">20% OFF</div>
         <h3>1 Ano</h3>
         <div class="price-container">
           <div class="original-price">R$120,00</div>
-          <div class="plan-price">R$60,00</div>
-          <div class="discount">50% OFF até Dez/2024</div>
-          <div class="future-price">Após Jan/2025: R$120,00</div>
+          <div class="plan-price">R$96,00</div>
         </div>
-        <div class="plan-button" onclick="showQRCode('1 Ano', 'R$60,00')">Escolher Agora</div>
+        <div class="plan-button" onclick="showQRCode('1 Ano', 'R$96,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix96.jpeg')">Escolher Agora</div>
       </div>
     </div>
     <div class="disclaimer">
       <h2>ATENÇÃO ( LEIA ANTES )</h2>
       <p>⚠️ O plano é válido para 1 computador apenas.</p>
       <p>⚠️ O Premium é perdido em caso de formatação do computador.</p>
-      <p>🔥 Aproveite os preços promocionais até Dezembro de 2024!</p>
     </div>
   </section>
 
   <div class="qr-modal" id="qrModal">
     <div class="qr-content">
       <div class="qr-left">
-        <img class="qr-code" src="https://cloudgraficaweb.github.io/CGVendas/scripts/QRCode.jpeg" alt="QR Code para pagamento">
+        <img class="qr-code" id="qrCodeImage" src="" alt="QR Code para pagamento">
         <div class="qr-details" id="qrDetails"></div>
       </div>
       <div class="qr-right">
@@ -363,14 +342,16 @@ body {
 
     window.addEventListener('load', animateCards);
 
-    function showQRCode(plan, price) {
+    function showQRCode(plan, price, qrCodeUrl) {
       const modal = document.getElementById('qrModal');
       const details = document.getElementById('qrDetails');
+      const qrCodeImage = document.getElementById('qrCodeImage');
       details.innerHTML = `
         <h3>Plano selecionado: ${plan}</h3>
         <p>Valor: ${price}</p>
         <p>Escaneie o QR Code para efetuar o pagamento</p>
       `;
+      qrCodeImage.src = qrCodeUrl;
       modal.style.display = 'flex';
     }
 
@@ -379,4 +360,5 @@ body {
       modal.style.display = 'none';
     }
   </script>
-</body></html>
+</body>
+</html>
