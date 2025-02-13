@@ -47,6 +47,78 @@ body {
   text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
 
+.hero-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.coupon-button {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.coupon-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+}
+
+.coupon-container {
+  display: none;
+  margin: 1rem auto;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+}
+
+.coupon-container.active {
+  display: block;
+  animation: slideDown 0.3s ease-out;
+}
+
+.coupon-input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid var(--gradient-middle);
+  border-radius: 8px;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.apply-coupon {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle));
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+
+.limited-time {
+  color: #ff006e;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 2rem 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  animation: pulse 2s infinite;
+}
+
 .plans {
   display: flex;
   justify-content: center;
@@ -255,12 +327,44 @@ body {
   cursor: pointer;
   font-size: 1.2rem;
 }
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 </style>
 </head>
 <body>
   <section class="hero">
-    <h1>Escolha seu Plano Premium</h1>
-    <div class="plans">
+    <div class="hero-header">
+      <h1>Escolha seu Plano Premium</h1>
+      <button class="coupon-button" onclick="toggleCoupon()">Cupom</button>
+    </div>
+    
+    <div class="coupon-container" id="couponContainer">
+      <input type="text" class="coupon-input" id="couponInput" placeholder="Digite seu código de cupom">
+      <button class="apply-coupon" onclick="applyCoupon()">Aplicar Cupom</button>
+    </div>
+
+    <div class="plans" id="plansContainer">
       <div class="plan-card">
         <h3>1 Mês</h3>
         <div class="price-container">
@@ -268,7 +372,7 @@ body {
         </div>
         <div class="plan-button" onclick="showQRCode('1 Mês', 'R$10,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix10.jpeg')">Escolher Agora</div>
       </div>
-      <div class="plan-card">
+      <div class="plan-card" id="threemonthPlan">
         <div class="discount-badge">10% OFF</div>
         <h3>3 Meses</h3>
         <div class="price-container">
@@ -296,6 +400,11 @@ body {
         <div class="plan-button" onclick="showQRCode('1 Ano', 'R$96,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix96.jpeg')">Escolher Agora</div>
       </div>
     </div>
+
+    <div id="limitedTimeMessage" style="display: none;" class="limited-time">
+      Cupom por tempo limitado!
+    </div>
+
     <div class="disclaimer">
       <h2>ATENÇÃO ( LEIA ANTES )</h2>
       <p>⚠️ O plano é válido para 1 computador apenas.</p>
@@ -341,6 +450,35 @@ body {
     });
 
     window.addEventListener('load', animateCards);
+
+    function toggleCoupon() {
+      const couponContainer = document.getElementById('couponContainer');
+      couponContainer.classList.toggle('active');
+    }
+
+    function applyCoupon() {
+      const couponInput = document.getElementById('couponInput');
+      const plansContainer = document.getElementById('plansContainer');
+      const limitedTimeMessage = document.getElementById('limitedTimeMessage');
+      
+      if (couponInput.value.toLowerCase() === 'smartprint') {
+        plansContainer.innerHTML = `
+          <div class="plan-card">
+            <div class="discount-badge">45% OFF</div>
+            <h3>3 Meses</h3>
+            <div class="price-container">
+              <div class="original-price">R$27,00</div>
+              <div class="plan-price">R$15,00</div>
+            </div>
+            <div class="plan-button" onclick="showQRCode('3 Meses - Cupom', 'R$15,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix15.jpeg')">Escolher Agora</div>
+          </div>
+        `;
+        limitedTimeMessage.style.display = 'block';
+        document.getElementById('couponContainer').classList.remove('active');
+      } else {
+        alert('Cupom inválido!');
+      }
+    }
 
     function showQRCode(plan, price, qrCodeUrl) {
       const modal = document.getElementById('qrModal');
