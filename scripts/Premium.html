@@ -456,29 +456,30 @@ body {
       couponContainer.classList.toggle('active');
     }
 
-    function applyCoupon() {
-      const couponInput = document.getElementById('couponInput');
-      const plansContainer = document.getElementById('plansContainer');
-      const limitedTimeMessage = document.getElementById('limitedTimeMessage');
-      
-      if (couponInput.value.toLowerCase() === 'smartprint') {
-        plansContainer.innerHTML = `
-          <div class="plan-card">
-            <div class="discount-badge">45% OFF</div>
-            <h3>3 Meses</h3>
-            <div class="price-container">
-              <div class="original-price">R$27,00</div>
-              <div class="plan-price">R$15,00</div>
-            </div>
-            <div class="plan-button" onclick="showQRCode('3 Meses - Cupom', 'R$15,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix15.jpeg')">Escolher Agora</div>
+   function applyCoupon() {
+    const couponInput = document.getElementById('couponInput');
+    const plansContainer = document.getElementById('plansContainer');
+    const limitedTimeMessage = document.getElementById('limitedTimeMessage');
+    const couponValue = couponInput.value.toLowerCase().trim();
+
+    if (couponValue === 'smartprint' || couponValue === 'encadernação solidária' || couponValue === 'encadernacao solidaria') {
+      plansContainer.innerHTML = `
+        <div class="plan-card">
+          <div class="discount-badge">45% OFF</div>
+          <h3>3 Meses</h3>
+          <div class="price-container">
+            <div class="original-price">R$27,00</div>
+            <div class="plan-price">R$15,00</div>
           </div>
-        `;
-        limitedTimeMessage.style.display = 'block';
-        document.getElementById('couponContainer').classList.remove('active');
-      } else {
-        alert('Cupom inválido!');
-      }
+          <div class="plan-button" onclick="showQRCode('3 Meses - Cupom', 'R$15,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix15.jpeg')">Escolher Agora</div>
+        </div>
+      `;
+      limitedTimeMessage.style.display = 'block';
+      document.getElementById('couponContainer').classList.remove('active');
+    } else {
+      alert('Cupom inválido!');
     }
+  }
 
     function showQRCode(plan, price, qrCodeUrl) {
       const modal = document.getElementById('qrModal');
