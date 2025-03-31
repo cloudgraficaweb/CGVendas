@@ -1,0 +1,32 @@
+{
+  "products": [
+    {
+      "id": "prod_1",
+      "name": "Banner em Lona 440g (Exemplo)",
+      "category": "banners",
+      "variations": [
+        {
+          "type": "meters",
+          "width": 1,
+          "height": 1,
+          "price": 59.9
+        }
+      ],
+      "images": [
+        ""
+      ],
+      "description": "Banner impresso em lona 440g com acabamento em bastão e corda."
+    }
+  ],
+  "categories": [
+    {
+      "name": "Banners",
+      "slug": "banners"
+    },
+    {
+      "name": "Cartões de Visita",
+      "slug": "cartoes-visita"
+    }
+  ],
+  "whatsappNumber": "5511999999999"
+}
