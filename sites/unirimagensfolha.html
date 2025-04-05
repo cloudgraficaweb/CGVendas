@@ -1,0 +1,291 @@
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redimensionador de Imagens A4</title>
+    <style>
+        /* Estilos gerais para responsividade */
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        #inputContainer {
+            margin: 20px;
+            text-align: center;
+        }
+
+        #imageInput {
+            display: none;
+        }
+
+        .custom-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #a4SheetContainer {
+            width: 21cm;
+            /* Largura do A4 */
+            height: 29.7cm;
+            /* Altura do A4 */
+            border: 1px dashed #ccc;
+            margin: 20px;
+            position: relative;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilos para as imagens dentro do A4 */
+        .a4Image {
+            position: absolute;
+            object-fit: contain;
+            transition: all 0.3s ease;
+        }
+
+        .actions {
+            margin: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .dpi-container {
+            display: flex;
+            align-items: center;
+            margin: 10px;
+        }
+        
+        #dpiInput {
+            width: 60px;
+            margin: 0 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 600px) {
+            #a4SheetContainer {
+                width: 90%;
+                /* Adapta a largura em telas menores */
+                height: auto;
+                /* Altura automática para manter a proporção */
+                aspect-ratio: 21 / 29.7;
+                /* Garante a proporção A4 */
+            }
+
+            .custom-button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="inputContainer">
+        <button class="custom-button" onclick="document.getElementById('imageInput').click()">
+            Selecionar Imagens
+        </button>
+        <input type="file" id="imageInput" multiple accept="image/*" onchange="handleImageUpload(this.files)">
+    </div>
+
+    <div class="actions">
+        <button class="custom-button" onclick="clearImages()">Limpar Tudo</button>
+        <div class="dpi-container">
+            <label for="dpiInput">DPI:</label>
+            <input type="number" id="dpiInput" value="150" min="72" max="300">
+        </div>
+        <button class="custom-button" onclick="downloadA4()">Baixar como PDF</button>
+    </div>
+
+    <div id="a4SheetContainer">
+        <!-- As imagens serão adicionadas aqui via JavaScript -->
+    </div>
+
+    <script>
+        // Array para armazenar todas as imagens
+        let allImages = [];
+
+        function handleImageUpload(files) {
+            if (files.length === 0) return;
+            
+            const a4SheetContainer = document.getElementById('a4SheetContainer');
+            
+            const newImages = Array.from(files);
+
+            Promise.all(newImages.map(file => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const img = new Image();
+                        img.onload = function () {
+                            img.dataset.originalWidth = img.naturalWidth;
+                            img.dataset.originalHeight = img.naturalHeight;
+                            img.dataset.aspectRatio = img.naturalWidth / img.naturalHeight;
+                            img.classList.add('a4Image');
+                            a4SheetContainer.appendChild(img);
+                            resolve(img);
+                        }
+                        img.onerror = reject;
+                        img.src = e.target.result;
+                    }
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            })).then(imgs => {
+                // Adiciona as novas imagens ao array global
+                allImages = [...allImages, ...imgs];
+                // Reorganiza todas as imagens
+                organizeImages();
+            });
+        }
+
+        function organizeImages() {
+            if (allImages.length === 0) return;
+            
+            const a4SheetContainer = document.getElementById('a4SheetContainer');
+            const containerWidth = a4SheetContainer.offsetWidth;
+            const containerHeight = a4SheetContainer.offsetHeight;
+            
+            // Determina quantas imagens por linha e coluna com base no número total
+            const numImages = allImages.length;
+            let cols, rows;
+            
+            if (numImages <= 1) {
+                cols = rows = 1;
+            } else if (numImages <= 4) {
+                cols = rows = 2;
+            } else if (numImages <= 9) {
+                cols = rows = 3;
+            } else if (numImages <= 16) {
+                cols = rows = 4;
+            } else {
+                cols = rows = Math.ceil(Math.sqrt(numImages));
+            }
+            
+            // Calcula a largura e altura máxima para cada célula
+            const cellWidth = containerWidth / cols;
+            const cellHeight = containerHeight / rows;
+            
+            // Padding dentro de cada célula para não grudar as imagens
+            const padding = 5;
+            
+            allImages.forEach((img, index) => {
+                const row = Math.floor(index / cols);
+                const col = index % cols;
+                
+                // Posição base para esta célula
+                const left = col * cellWidth;
+                const top = row * cellHeight;
+                
+                // Ajusta dimensões mantendo proporção
+                const aspectRatio = parseFloat(img.dataset.aspectRatio);
+                let width, height;
+                
+                // Verifica se a imagem é mais larga ou mais alta para determinar a dimensão limitante
+                if (cellWidth / cellHeight > aspectRatio) {
+                    // Célula é mais larga que a proporção da imagem, então altura é a limitante
+                    height = cellHeight - (padding * 2);
+                    width = height * aspectRatio;
+                } else {
+                    // Célula é mais alta que a proporção da imagem, então largura é a limitante
+                    width = cellWidth - (padding * 2);
+                    height = width / aspectRatio;
+                }
+                
+                // Aplica as dimensões e posição
+                img.style.width = `${width}px`;
+                img.style.height = `${height}px`;
+                img.style.left = `${left + (cellWidth - width) / 2}px`;
+                img.style.top = `${top + (cellHeight - height) / 2}px`;
+            });
+        }
+
+        function clearImages() {
+            const a4SheetContainer = document.getElementById('a4SheetContainer');
+            a4SheetContainer.innerHTML = '';
+            allImages = [];
+        }
+
+        function downloadA4() {
+            const dpi = parseInt(document.getElementById('dpiInput').value) || 150;
+            const a4SheetContainer = document.getElementById('a4SheetContainer');
+            
+            // Mostrar indicação de carregamento
+            const loadingMsg = document.createElement('div');
+            loadingMsg.textContent = 'Gerando PDF...';
+            loadingMsg.style.position = 'fixed';
+            loadingMsg.style.top = '50%';
+            loadingMsg.style.left = '50%';
+            loadingMsg.style.transform = 'translate(-50%, -50%)';
+            loadingMsg.style.padding = '20px';
+            loadingMsg.style.background = 'rgba(0,0,0,0.7)';
+            loadingMsg.style.color = 'white';
+            loadingMsg.style.borderRadius = '5px';
+            loadingMsg.style.zIndex = '1000';
+            document.body.appendChild(loadingMsg);
+            
+            // Use html2canvas para capturar o conteúdo
+            setTimeout(() => {
+                // Configurações para dpi específico
+                const scale = dpi / 96; // 96 DPI é o padrão para web
+                
+                html2canvas(a4SheetContainer, {
+                    scale: scale,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff'
+                }).then(canvas => {
+                    // Converte canvas para imagem
+                    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                    
+                    // Cria novo PDF com dimensões A4
+                    const pdf = new jspdf.jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+                    
+                    // Adiciona a imagem ao PDF
+                    const imgWidth = 210; // A4 width in mm
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+                    
+                    // Download do PDF
+                    pdf.save('imagens_formatadas_a4.pdf');
+                    
+                    // Remove indicação de carregamento
+                    document.body.removeChild(loadingMsg);
+                });
+            }, 500);
+        }
+
+        // Redimensionar quando a janela for redimensionada
+        window.addEventListener('resize', organizeImages);
+    </script>
+    
+    <!-- Adicionar bibliotecas necessárias -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Inicializa o jsPDF para uso global
+        window.jspdf = window.jspdf || {};
+    </script>
+</body>
+
+</html>
