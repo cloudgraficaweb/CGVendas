@@ -41,7 +41,7 @@
             background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
             color: #fff;
             text-align: center;
-            padding: 1.5rem 1rem;
+            padding: 1rem 0.8rem;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -64,8 +64,8 @@
         }
 
         .hero h1 {
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
-            margin-bottom: 0.8rem;
+            font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+            margin-bottom: 0.6rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
             font-weight: 700;
             position: relative;
@@ -77,8 +77,8 @@
             align-items: center;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
+            gap: 0.4rem;
+            margin-bottom: 0.4rem;
             width: 100%;
             position: relative;
             z-index: 1;
@@ -87,27 +87,27 @@
         .coupon-button {
             background: linear-gradient(135deg, var(--accent-color), #ff9e00);
             border: none;
-            padding: 0.6rem 1.5rem;
+            padding: 0.5rem 1.2rem;
             border-radius: 50px;
             color: var(--text-color);
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             transition: var(--transition);
             box-shadow: var(--shadow);
         }
 
         .coupon-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
         }
 
         .coupon-container {
             display: none;
-            margin: 0.8rem auto 1.5rem;
-            max-width: 350px;
+            margin: 0.6rem auto 1rem;
+            max-width: 300px;
             background: rgba(255, 255, 255, 0.95);
-            padding: 1rem;
+            padding: 0.8rem;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             backdrop-filter: blur(10px);
@@ -121,11 +121,11 @@
 
         .coupon-input {
             width: 100%;
-            padding: 0.8rem;
+            padding: 0.6rem;
             border: 2px solid rgba(114, 9, 183, 0.3);
             border-radius: var(--radius);
-            font-size: 0.9rem;
-            margin-bottom: 0.8rem;
+            font-size: 0.8rem;
+            margin-bottom: 0.6rem;
             font-family: 'Montserrat', sans-serif;
             transition: var(--transition);
         }
@@ -139,7 +139,7 @@
         .apply-coupon {
             background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle));
             border: none;
-            padding: 0.8rem 1.2rem;
+            padding: 0.6rem 1rem;
             border-radius: var(--radius);
             color: #fff;
             font-weight: 600;
@@ -156,15 +156,15 @@
 
         .limited-time {
             color: #fff;
-            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-size: clamp(0.9rem, 2vw, 1rem);
             font-weight: bold;
             text-align: center;
-            margin: 1.5rem 0;
+            margin: 1rem 0;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
             background: var(--secondary-color);
-            padding: 0.8rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             border-radius: var(--radius);
             animation: pulse 2s infinite;
             box-shadow: var(--shadow);
@@ -173,9 +173,9 @@
         .plans {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            padding: 0.25rem;
-            max-width: 1000px;
+            gap: 0.8rem;
+            padding: 0.2rem;
+            max-width: 900px;
             margin: 0 auto;
             width: 100%;
             position: relative;
@@ -186,7 +186,7 @@
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 1rem;
+            padding: 0.8rem;
             text-align: center;
             transition: var(--transition);
             position: relative;
@@ -199,14 +199,14 @@
         }
 
         .plan-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
             border-color: var(--gradient-middle);
         }
 
         .plan-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
             color: var(--gradient-start);
             position: relative;
             display: inline-block;
@@ -215,10 +215,10 @@
         .plan-card h3::after {
             content: '';
             position: absolute;
-            bottom: -8px;
+            bottom: -6px;
             left: 50%;
             transform: translateX(-50%);
-            width: 40px;
+            width: 35px;
             height: 2px;
             background: linear-gradient(90deg, var(--gradient-start), var(--gradient-middle));
             border-radius: 2px;
@@ -226,25 +226,25 @@
 
         .price-container {
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 0.5rem;
+            padding: 0.4rem;
             border-radius: var(--radius);
-            margin: 0.8rem 0;
+            margin: 0.6rem 0;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .plan-price {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--gradient-middle);
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.3rem;
             line-height: 1.2;
         }
 
         .original-price {
             text-decoration: line-through;
             color: var(--text-light);
-            font-size: 1rem;
-            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
             opacity: 0.8;
         }
 
@@ -252,99 +252,229 @@
             display: inline-block;
             background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle));
             color: #fff;
-            padding: 0.8rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
             transition: var(--transition);
             cursor: pointer;
-            margin-top: 0.8rem;
+            margin-top: 0.6rem;
             border: none;
             box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            font-size: 0.9rem;
         }
 
         .plan-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
         }
 
         .disclaimer {
-            margin-top: 1rem;
-            font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+            margin-top: 0.5rem;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
             color: #fff;
             width: 95%;
-            max-width: 1000px;
+            max-width: 900px;
             text-align: center;
             background: rgba(0, 0, 0, 0.3);
-            padding: 1rem;
+            padding: 0.8rem;
             border-radius: var(--radius);
             backdrop-filter: blur(10px);
             box-shadow: var(--shadow);
             border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         .disclaimer h2 {
             color: var(--accent-color);
-            font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+            font-size: clamp(1.2rem, 2vw, 1.6rem);
             text-transform: uppercase;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             font-weight: 700;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
         }
 
         .disclaimer p {
-            margin: 0.8rem 0;
+            margin: 0.6rem 0;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .qr-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .qr-modal.active {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .qr-content {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            text-align: center;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (min-width: 768px) {
+            .qr-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .qr-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem;
+        }
+
+        .qr-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            padding: 0.8rem;
+        }
+
+        .qr-code {
+            width: 100%;
+            max-width: 250px;
+            height: auto;
+            margin: 0 auto 0.8rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-details {
+            margin-bottom: 0.8rem;
+        }
+
+        .qr-details h3 {
+            font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+            color: var(--gradient-start);
+            margin-bottom: 1rem;
+        }
+
+        .qr-instructions {
+            font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+            color: var(--text-color);
+            margin-top: 1rem;
+        }
+
+        .qr-instructions p {
+            margin: 0.8rem 0;
+        }
+
+        .qr-instructions strong {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: var(--gradient-middle);
+            display: block;
+            margin: 0.8rem 0;
+        }
+
+        .close-modal {
+            position: absolute;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background-color: var(--secondary-color);
+            color: #fff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .close-modal:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(247, 37, 133, 0.4);
         }
 
         /* Media Queries */
         @media (max-width: 1280px) {
             .plans {
                 grid-template-columns: repeat(4, 1fr);
-                gap: 0.8rem;
-                max-width: 900px;
+                gap: 0.6rem;
+                max-width: 800px;
             }
             .plan-card {
-                padding: 0.8rem;
+                padding: 0.6rem;
             }
             .plan-card h3 {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
             }
             .plan-price {
-                font-size: 1.6rem;
+                font-size: 1.4rem;
             }
             .original-price {
-                font-size: 0.9rem;
+                font-size: 0.8rem;
             }
             .plan-button {
-                padding: 0.7rem 1.2rem;
-                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            .disclaimer {
+                margin-top: 0.4rem;
+                padding: 0.6rem;
             }
         }
 
         @media (max-width: 768px) {
             .hero {
-                padding: 1rem 0.8rem;
+                padding: 0.8rem 0.6rem;
             }
             .plans {
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 0.8rem;
                 max-width: 100%;
             }
             .plan-card {
-                padding: 1rem;
+                padding: 0.8rem;
             }
             .hero h1 {
-                font-size: clamp(1.5rem, 3.5vw, 2rem);
+                font-size: clamp(1.3rem, 3vw, 1.8rem);
             }
             .disclaimer h2 {
-                font-size: clamp(1.2rem, 2vw, 1.5rem);
+                font-size: clamp(1rem, 1.8vw, 1.4rem);
             }
             .disclaimer {
-                font-size: clamp(0.8rem, 1.5vw, 1rem);
+                font-size: clamp(0.7rem, 1.3vw, 0.9rem);
+                margin-top: 0.3rem;
+            }
+            .close-modal {
+                bottom: 1rem;
+                right: 1rem;
+                padding: 0.5rem 1rem;
             }
         }
 
@@ -425,7 +555,6 @@
         </div>
     </section>
 
-    <!-- QR Modal remains unchanged -->
     <div class="qr-modal" id="qrModal">
         <div class="qr-content">
             <div class="qr-left">
@@ -446,9 +575,13 @@
     </div>
 
     <script>
-        // JavaScript remains unchanged
         document.addEventListener('DOMContentLoaded', function() {
             const planCards = document.querySelectorAll('.plan-card');
+            const qrModal = document.getElementById('qrModal');
+            
+            // Ensure modal is hidden on load
+            qrModal.style.display = 'none';
+            qrModal.classList.remove('active');
             
             function animateCards() {
                 planCards.forEach((card, index) => {
@@ -508,6 +641,7 @@
             `;
             qrCodeImage.src = qrCodeUrl;
             modal.style.display = 'flex';
+            modal.classList.add('active');
             
             modal.addEventListener('click', function(event) {
                 if (event.target === modal) {
@@ -519,6 +653,7 @@
         function closeQRCode() {
             const modal = document.getElementById('qrModal');
             modal.style.display = 'none';
+            modal.classList.remove('active');
         }
     </script>
 </body>
