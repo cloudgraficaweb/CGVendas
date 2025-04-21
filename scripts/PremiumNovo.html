@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <base href="." />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PremiumPlus - Plano Premium para Você</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #f72585;
+            --accent-color: #ffd60a;
+            --background-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #2b2d42;
+            --text-light: #6c757d;
+            --gradient-start: #4361ee;
+            --gradient-middle: #7209b7;
+            --gradient-end: #f72585;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
+            color: #fff;
+            text-align: center;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-weight: 700;
+            position: relative;
+        }
+
+        .hero-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .coupon-button {
+            background: linear-gradient(135deg, var(--accent-color), #ff9e00);
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            color: var(--text-color);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .coupon-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .coupon-container {
+            display: none;
+            margin: 1rem auto 2rem;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            width: 90%;
+        }
+
+        .coupon-container.active {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .coupon-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(114, 9, 183, 0.3);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            transition: var(--transition);
+        }
+
+        .coupon-input:focus {
+            outline: none;
+            border-color: var(--gradient-middle);
+            box-shadow: 0 0 0 3px rgba(114, 9, 183, 0.2);
+        }
+
+        .apply-coupon {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle));
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-family: 'Montserrat', sans-serif;
+            transition: var(--transition);
+        }
+
+        .apply-coupon:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .limited-time {
+            color: #fff;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-weight: bold;
+            text-align: center;
+            margin: 2rem 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            background: var(--secondary-color);
+            padding: 1rem 2rem;
+            border-radius: var(--radius);
+            animation: pulse 2s infinite;
+            box-shadow: var(--shadow);
+        }
+
+        .plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            padding: 0.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .plan-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            border: 2px solid transparent;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border-color: var(--gradient-middle);
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 15px;
+            right: -35px;
+            background: var(--secondary-color);
+            color: white;
+            padding: 6px 40px;
+            transform: rotate(45deg);
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+
+        .plan-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--gradient-start);
+            position: relative;
+            display: inline-block;
+        }
+
+        .plan-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-middle));
+            border-radius: 3px;
+        }
+
+        .price-container {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin: 1rem 0;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .plan-price {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--gradient-middle);
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+
+        .plan-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle));
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            cursor: pointer;
+            margin-top: 1rem;
+            border: none;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .plan-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+        }
+
+        .disclaimer {
+            margin-top: 1.5rem;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: #fff;
+            width: 95%;
+            max-width: 1200px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .disclaimer h2 {
+            color: var(--accent-color);
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .disclaimer p {
+            margin: 1rem 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .qr-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .qr-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: var(--radius);
+            text-align: center;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (min-width: 768px) {
+            .qr-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .qr-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .qr-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            padding: 1rem;
+        }
+
+        .qr-code {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            margin: 0 auto 1rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-details {
+            margin-bottom: 1rem;
+        }
+
+        .qr-details h3 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--gradient-start);
+            margin-bottom: 1.5rem;
+        }
+
+        .qr-instructions {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: var(--text-color);
+            margin-top: 1.5rem;
+        }
+
+        .qr-instructions p {
+            margin: 1rem 0;
+        }
+
+        .qr-instructions strong {
+            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+            color: var(--gradient-middle);
+            display: block;
+            margin: 1rem 0;
+        }
+
+        .close-modal {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--secondary-color);
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .close-modal:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(247, 37, 133, 0.4);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.03);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 2rem 1rem;
+            }
+            
+            .plans {
+                grid-template-columns: 1fr;
+            }
+            
+            .close-modal {
+                bottom: 1rem;
+                right: 1rem;
+                padding: 0.7rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-header">
+            <h1>Escolha seu Plano Premium</h1>
+            <button class="coupon-button" onclick="toggleCoupon()">Cupom</button>
+        </div>
+        
+        <div class="coupon-container" id="couponContainer">
+            <input type="text" class="coupon-input" id="couponInput" placeholder="Digite seu código de cupom">
+            <button class="apply-coupon" onclick="applyCoupon()">Aplicar Cupom</button>
+        </div>
+
+        <div class="plans" id="plansContainer">
+            <div class="plan-card">
+                <h3>1 Mês</h3>
+                <div class="price-container">
+                    <div class="plan-price">R$10,00</div>
+                </div>
+                <div class="plan-button" onclick="showQRCode('1 Mês', 'R$10,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix10.jpeg')">Escolher Agora</div>
+            </div>
+            <div class="plan-card" id="threemonthPlan">
+                <div class="discount-badge">10% OFF</div>
+                <h3>3 Meses</h3>
+                <div class="price-container">
+                    <div class="original-price">R$30,00</div>
+                    <div class="plan-price">R$27,00</div>
+                </div>
+                <div class="plan-button" onclick="showQRCode('3 Meses', 'R$27,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix27.jpeg')">Escolher Agora</div>
+            </div>
+            <div class="plan-card">
+                <div class="discount-badge">17% OFF</div>
+                <h3>6 Meses</h3>
+                <div class="price-container">
+                    <div class="original-price">R$60,00</div>
+                    <div class="plan-price">R$49,00</div>
+                </div>
+                <div class="plan-button" onclick="showQRCode('6 Meses', 'R$49,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix49.jpeg')">Escolher Agora</div>
+            </div>
+            <div class="plan-card">
+                <div class="discount-badge">20% OFF</div>
+                <h3>1 Ano</h3>
+                <div class="price-container">
+                    <div class="original-price">R$120,00</div>
+                    <div class="plan-price">R$96,00</div>
+                </div>
+                <div class="plan-button" onclick="showQRCode('1 Ano', 'R$96,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix96.jpeg')">Escolher Agora</div>
+            </div>
+        </div>
+
+        <div id="limitedTimeMessage" style="display: none;" class="limited-time">
+            Cupom por tempo limitado!
+        </div>
+
+        <div class="disclaimer">
+            <h2>ATENÇÃO ( LEIA ANTES )</h2>
+            <p> O plano é válido para 1 computador apenas.</p>
+            <p> O Premium é perdido em caso de formatação do computador.</p>
+            <p> Se o seu ID for do tipo Bios não perde o premium ao formatar (Verifique antes).</p>
+        </div>
+    </section>
+
+    <div class="qr-modal" id="qrModal">
+        <div class="qr-content">
+            <div class="qr-left">
+                <img class="qr-code" id="qrCodeImage" src="" alt="QR Code para pagamento">
+                <div class="qr-details" id="qrDetails"></div>
+            </div>
+            <div class="qr-right">
+                <div class="qr-instructions">
+                    <p>Após o pagamento, envie o comprovante para o número:</p>
+                    <strong>(81)98151-8219</strong>
+                    <p>Você receberá o código de ativação em seguida.</p>
+                    <p>Horário de atendimento mais ativo:</p>
+                    <strong>Segunda a Sábado, das 9h às 17h</strong>
+                </div>
+            </div>
+            <button class="close-modal" onclick="closeQRCode()">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const planCards = document.querySelectorAll('.plan-card');
+            
+            function animateCards() {
+                planCards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.opacity = 1;
+                        card.style.transform = 'translateY(0)';
+                    }, index * 150);
+                });
+            }
+
+            planCards.forEach(card => {
+                card.style.opacity = 0;
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+            });
+
+            animateCards();
+        });
+
+        function toggleCoupon() {
+            const couponContainer = document.getElementById('couponContainer');
+            couponContainer.classList.toggle('active');
+        }
+
+        function applyCoupon() {
+            const couponInput = document.getElementById('couponInput');
+            const plansContainer = document.getElementById('plansContainer');
+            const limitedTimeMessage = document.getElementById('limitedTimeMessage');
+            const couponValue = couponInput.value.toLowerCase().trim();
+
+            if (couponValue === 'smartprint' || couponValue === 'encadernação solidária' || couponValue === 'encadernacao solidaria') {
+                plansContainer.innerHTML = `
+                    <div class="plan-card">
+                        <div class="discount-badge">45% OFF</div>
+                        <h3>3 Meses</h3>
+                        <div class="price-container">
+                            <div class="original-price">R$27,00</div>
+                            <div class="plan-price">R$15,00</div>
+                        </div>
+                        <div class="plan-button" onclick="showQRCode('3 Meses - Cupom', 'R$15,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix15.jpeg')">Escolher Agora</div>
+                    </div>
+                `;
+                limitedTimeMessage.style.display = 'block';
+                document.getElementById('couponContainer').classList.remove('active');
+            } else {
+                alert('Cupom inválido!');
+            }
+        }
+
+        function showQRCode(plan, price, qrCodeUrl) {
+            const modal = document.getElementById('qrModal');
+            const details = document.getElementById('qrDetails');
+            const qrCodeImage = document.getElementById('qrCodeImage');
+            details.innerHTML = `
+                <h3>Plano selecionado: ${plan}</h3>
+                <p>Valor: ${price}</p>
+                <p>Escaneie o QR Code para efetuar o pagamento</p>
+            `;
+            qrCodeImage.src = qrCodeUrl;
+            modal.style.display = 'flex';
+            
+            // Add click event to close modal when clicking outside
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    closeQRCode();
+                }
+            });
+        }
+
+        function closeQRCode() {
+            const modal = document.getElementById('qrModal');
+            modal.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
