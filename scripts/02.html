@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>CloudUpscaler</title>
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #1d2a36;
+      --menu-bg: #344a60;
+      --element-bg: #5f7890;
+      --text: #ffffff;
+      --accent: #00b4d8;
+      --error: #ff4d4d;
+      --warning: #ff9800;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --border-radius: 8px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+      margin: 0;
+    }
+
+    .sidebar {
+      width: 300px;
+      background: var(--menu-bg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      border-right: 1px solid #2a3b4c;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .file-input-label {
+      background: var(--element-bg);
+      color: var(--text);
+      padding: 12px;
+      border-radius: var(--border-radius);
+      text-align: center;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .file-input-label:hover {
+      background: var(--accent);
+    }
+
+    #inputImage {
+      display: none;
+    }
+
+    .model-selector,
+    .process-btn,
+    .download-btn {
+      padding: 12px;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      background: var(--element-bg);
+      color: var(--text);
+    }
+
+    .model-selector {
+      background: var(--background);
+      border: 1px solid var(--element-bg);
+    }
+
+    .process-btn:hover,
+    .download-btn:hover {
+      background: var(--accent);
+    }
+
+    .process-btn:disabled,
+    .download-btn:disabled {
+      background: #4a5a6b;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .status-container {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    #status {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    #errorDetails {
+      color: var(--error);
+      font-size: 0.8rem;
+      margin-top: 5px;
+    }
+
+    .troubleshoot-btn {
+      background: var(--warning);
+      color: var(--text);
+      border: none;
+      padding: 8px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .troubleshoot-info {
+      background: #2a3b4c;
+      border-left: 4px solid var(--warning);
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      display: none;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-height: 150px;
+      overflow-y: auto;
+      text-align: left;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      cursor: pointer;
+    }
+
+    .main-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      cursor: grab;
+    }
+
+    .main-container.panning {
+      cursor: grabbing;
+    }
+
+    .image-comparison {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 1200px;
+      max-height: 800px;
+      background: var(--background);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 20px var(--shadow);
+      overflow: hidden;
+      display: flex;
+    }
+
+    .canvas-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      background: var(--background);
+    }
+
+    .canvas-half {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      border-right: 1px solid var(--element-bg);
+    }
+
+    .canvas-half canvas,
+    .canvas-half img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transform-origin: 0 0;
+      image-rendering: pixelated;
+      background: var(--background);
+    }
+
+    #inputCanvas,
+    #inputPreview,
+    #outputCanvas {
+      background: var(--background);
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: var(--text);
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .overlay.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .overlay-message {
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    .remaining-time {
+      font-size: 1rem;
+      color: var(--accent);
+      margin-top: 10px;
+    }
+
+    .progress-bar-container {
+      width: 300px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--accent);
+      width: 0;
+      transition: width 0.5s ease;
+    }
+
+    .cancel-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: var(--error);
+      color: var(--text);
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .cancel-btn:hover {
+      background: #cc3d3d;
+    }
+
+    .cancel-btn:disabled {
+      background: #a04040;
+      cursor: not-allowed;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h1 style="font-size: 20px;">CloudUpscaler Leve V2</h1>
+    <div class="control-group">
+      <label for="inputImage" class="file-input-label">Escolher Imagem</label>
+      <input type="file" id="inputImage" accept="image/*">
+      <select id="modelSelect" class="model-selector">
+        <option value="rapido" selected>Rápido (2x)</option>
+        <option value="digital">Digital (4x)</option>
+        <option value="foto">Foto (4x)</option>
+      </select>
+      <div class="checkbox-container">
+        <input type="checkbox" id="limitSize" checked>
+        <label for="limitSize">Limitar Tamanho</label>
+      </div>
+      <div style="font-size: 12px;">
+        (desative para um resultado melhor, porém o processamento será bem mais demorado)
+      </div>
+      <button id="processBtn" class="process-btn" disabled>Processar Imagem</button>
+      <button id="downloadBtn" class="download-btn" disabled>Baixar Imagem</button>
+      <div class="status-container">
+        <div id="status">Aguardando imagem...</div>
+        <div id="errorDetails"></div>
+        <button id="troubleshootBtn" class="troubleshoot-btn">Detalhes Técnicos</button>
+        <div id="troubleshoot-info" class="troubleshoot-info"></div>
+      </div>
+    </div>
+  </div>
+  <div class="main-container" id="mainContainer">
+    <div class="image-comparison" id="imageComparison">
+      <div class="canvas-container" id="canvasContainer">
+        <div class="canvas-half" id="inputHalf">
+          <img id="inputPreview" class="hidden" alt="Imagem original">
+          <canvas id="inputCanvas"></canvas>
+        </div>
+        <div class="canvas-half" id="outputHalf">
+          <canvas id="outputCanvas" class="hidden"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="overlay" class="overlay">
+    <div class="spinner"></div>
+    <div id="overlay-message" class="overlay-message">Processando...</div>
+    <div id="remaining-time" class="remaining-time"></div>
+    <div class="progress-bar-container">
+      <div id="progress-bar" class="progress-bar"></div>
+    </div>
+    <button id="cancelBtn" class="cancel-btn">Cancelar Processamento</button>
+  </div>
+  <script>
+    const MODELS = {
+      rapido: { url: 'https://cloudgraficaweb.github.io/CGVendas/scripts/upscale/levenoise2_scale2.0x_model.onnx', key: 'upscale_model_rapido_v1', inputName: 'input', outputName: 'conv7', tileSize: 156 },
+      digital: { url: 'https://cloudgraficaweb.github.io/CGVendas/scripts/upscale/noise2_scale4x.onnx', key: 'upscale_model_digital_v1', inputName: 'x', outputName: 'y', tileSize: 256 },
+      foto: { url: 'https://cloudgraficaweb.github.io/CGVendas/scripts/upscale/foto_noise2_scale4x.onnx', key: 'upscale_model_foto_v1', inputName: 'x', outputName: 'y', tileSize: 256 }
+    };
+    const DB_NAME = 'CloudUpscalerDB', DB_VERSION = 1, STORE_NAME = 'models';
+    const MAX_SIZE_2X = 800, MAX_SIZE_4X = 600;
+    const CONFIG = {
+      rapido: { scale: 2 },
+      digital: { scale: 4 },
+      foto: { scale: 4 }
+    };
+    const ZOOM_DEBOUNCE_MS = 16;
+    const OVERLAP = 16;
+    const BORDER_SIZE = 20;
+    const BASE_CROP = 16; // Base crop size for 2x model
+    let session = null, selectedModel = 'rapido', debugInfo = [];
+    let processingStartTime = 0, overlayTimerInterval = null;
+    let selectedFile = null, isModelLoading = false, isModelLoaded = false, isProcessingCancelled = false;
+    let db = null;
+    let currentProgress = { done: 0, total: 0 };
+    let zoomLevel = 1, minZoom = 0.5, maxZoom = 8;
+    let translateX = 0, translateY = 0;
+    let isPanning = false, lastPanX = 0, lastPanY = 0;
+    let lastZoomTime = 0;
+    let processedImageDimensions = { width: 0, height: 0 };
+    const elements = {
+      status: document.getElementById('status'),
+      error: document.getElementById('errorDetails'),
+      inputCanvas: document.getElementById('inputCanvas'),
+      outputCanvas: document.getElementById('outputCanvas'),
+      downloadBtn: document.getElementById('downloadBtn'),
+      troubleshootBtn: document.getElementById('troubleshootBtn'),
+      troubleshootInfo: document.getElementById('troubleshoot-info'),
+      overlay: document.getElementById('overlay'),
+      overlayMessage: document.getElementById('overlay-message'),
+      remainingTime: document.getElementById('remaining-time'),
+      processBtn: document.getElementById('processBtn'),
+      inputPreview: document.getElementById('inputPreview'),
+      progressBar: document.getElementById('progress-bar'),
+      modelSelect: document.getElementById('modelSelect'),
+      mainContainer: document.getElementById('mainContainer'),
+      imageComparison: document.getElementById('imageComparison'),
+      canvasContainer: document.getElementById('canvasContainer'),
+      cancelBtn: document.getElementById('cancelBtn'),
+      limitSize: document.getElementById('limitSize')
+    };
+    const ctx = {
+      input: elements.inputCanvas.getContext('2d', { alpha: false, willReadFrequently: true }),
+      output: elements.outputCanvas.getContext('2d', { alpha: false, willReadFrequently: true })
+    };
+    if (ctx.input && ctx.output) {
+      ctx.input.fillStyle = '#1d2a36';
+      ctx.input.fillRect(0, 0, elements.inputCanvas.width || 1, elements.inputCanvas.height || 1);
+      ctx.output.fillStyle = '#1d2a36';
+      ctx.output.fillRect(0, 0, elements.outputCanvas.width || 1, elements.outputCanvas.height || 1);
+    } else {
+      console.error('Contexto de canvas indisponível ao inicializar');
+    }
+    async function initDB() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) {
+          logDebug("IndexedDB não suportado pelo navegador");
+          showError("Navegador não suporta armazenamento local", "IndexedDB não disponível.");
+          resolve(null);
+          return;
+        }
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = (event) => {
+          logDebug(`Erro ao abrir IndexedDB: ${event.target.error}`);
+          showError("Erro ao acessar armazenamento local", event.target.error?.message || 'Erro desconhecido');
+          resolve(null);
+        };
+        request.onupgradeneeded = (event) => {
+          const dbInstance = event.target.result;
+          if (!dbInstance.objectStoreNames.contains(STORE_NAME)) {
+            dbInstance.createObjectStore(STORE_NAME, { keyPath: 'id' });
+            logDebug("Store 'models' criado no IndexedDB");
+          }
+        };
+        request.onsuccess = (event) => {
+          db = event.target.result;
+          logDebug("IndexedDB inicializado com sucesso");
+          resolve(db);
+        };
+      });
+    }
+    async function checkModelInIndexedDB(modelKey) {
+      if (!db) return null;
+      return new Promise((resolve) => {
+        try {
+          const transaction = db.transaction([STORE_NAME], "readonly");
+          const store = transaction.objectStore(STORE_NAME);
+          const request = store.get(modelKey);
+          request.onerror = () => {
+            logDebug(`Erro ao buscar modelo ${modelKey} no IndexedDB`);
+            resolve(null);
+          };
+          request.onsuccess = (event) => {
+            const model = event.target.result;
+            if (model) {
+              logDebug(`Modelo ${modelKey} encontrado no IndexedDB`);
+              resolve(model.data);
+            } else {
+              logDebug(`Modelo ${modelKey} não encontrado no IndexedDB`);
+              resolve(null);
+            }
+          };
+        } catch (e) {
+          logDebug(`Exceção ao acessar IndexedDB para ${modelKey}: ${e.message}`);
+          resolve(null);
+        }
+      });
+    }
+    async function saveModelToIndexedDB(modelKey, modelData) {
+      if (!db) return false;
+      return new Promise((resolve) => {
+        try {
+          const transaction = db.transaction([STORE_NAME], "readwrite");
+          const store = transaction.objectStore(STORE_NAME);
+          const modelObject = { id: modelKey, data: modelData, timestamp: Date.now() };
+          const request = store.put(modelObject);
+          request.onerror = () => {
+            logDebug(`Erro ao salvar modelo ${modelKey} no IndexedDB`);
+            resolve(false);
+          };
+          request.onsuccess = () => {
+            logDebug(`Modelo ${modelKey} salvo com sucesso no IndexedDB`);
+            resolve(true);
+          };
+        } catch (e) {
+          logDebug(`Exceção ao salvar no IndexedDB para ${modelKey}: ${e.message}`);
+          resolve(false);
+        }
+      });
+    }
+    function showOverlay(message) {
+      elements.overlayMessage.textContent = message || 'Processando...';
+      elements.remainingTime.textContent = '';
+      elements.progressBar.style.width = '0%';
+      elements.overlay.classList.add('active');
+      elements.cancelBtn.disabled = false;
+    }
+    function hideOverlay() {
+      elements.overlay.classList.remove('active');
+      if (overlayTimerInterval) {
+        clearInterval(overlayTimerInterval);
+        overlayTimerInterval = null;
+      }
+    }
+    function updateProgressBar(done, total) {
+      if (total <= 0) return;
+      const percentage = Math.min(100, Math.floor((done / total) * 100));
+      elements.progressBar.style.width = `${percentage}%`;
+    }
+    function startOverlayTimer(totalTiles) {
+      if (overlayTimerInterval) clearInterval(overlayTimerInterval);
+      processingStartTime = Date.now();
+      const estTimePerTile = 500;
+      const totalEstTime = totalTiles * estTimePerTile;
+      currentProgress = { done: 0, total: totalTiles };
+      overlayTimerInterval = setInterval(() => {
+        if (isProcessingCancelled) {
+          clearInterval(overlayTimerInterval);
+          overlayTimerInterval = null;
+          return;
+        }
+        const elapsed = Date.now() - processingStartTime;
+        let remaining = totalEstTime - elapsed;
+        if (currentProgress.done > 0 && currentProgress.total > 0) {
+          const timePerTileActual = elapsed / currentProgress.done;
+          remaining = timePerTileActual * (currentProgress.total - currentProgress.done);
+        }
+        const seconds = Math.ceil(remaining / 1000);
+        const minutes = Math.floor(seconds / 60);
+        elements.remainingTime.textContent = `Tempo restante estimado: ${minutes}m ${seconds % 60}s`;
+        if (remaining <= 0 && currentProgress.done < currentProgress.total) {
+          elements.remainingTime.textContent = 'Finalizando...';
+        }
+      }, 1000);
+    }
+    function showError(msg, tech) {
+      hideOverlay();
+      elements.status.textContent = msg;
+      elements.error.textContent = tech ? 'Erro técnico. Veja detalhes.' : '';
+      elements.troubleshootBtn.style.display = tech ? 'block' : 'none';
+      elements.troubleshootInfo.style.display = 'none';
+      if (tech) debugInfo.push(`[Erro] ${msg}: ${tech}`);
+      elements.troubleshootInfo.textContent = debugInfo.join('\n\n');
+      elements.processBtn.disabled = !selectedFile;
+      elements.downloadBtn.disabled = true;
+    }
+    function updateStatus(msg) {
+      elements.status.textContent = msg;
+      elements.overlayMessage.textContent = msg;
+    }
+    function logDebug(msg) {
+      console.log(msg);
+      debugInfo.push(`[DEBUG] ${new Date().toLocaleTimeString()} - ${msg}`);
+      if (elements.troubleshootInfo.style.display === 'block') {
+        elements.troubleshootInfo.textContent = debugInfo.join('\n\n');
+        elements.troubleshootInfo.scrollTop = elements.troubleshootInfo.scrollHeight;
+      }
+    }
+    async function loadModel() {
+      if (isModelLoading) {
+        updateStatus(`Aguardando carregamento do modelo ${elements.modelSelect.value}...`);
+        return new Promise((resolve) => {
+          const checkInterval = setInterval(() => {
+            if (!isModelLoading && session) {
+              clearInterval(checkInterval);
+              resolve(session);
+            } else if (!isModelLoading && !session) {
+              clearInterval(checkInterval);
+              resolve(null);
+            }
+          }, 300);
+        });
+      }
+      const targetModel = elements.modelSelect.value;
+      if (isModelLoaded && session && selectedModel === targetModel) {
+        updateStatus(`Modelo ${selectedModel} pronto!`);
+        return session;
+      }
+      selectedModel = targetModel;
+      const modelConfig = MODELS[selectedModel];
+      updateStatus(`Verificando cache local para modelo ${selectedModel}...`);
+      debugInfo = [];
+      elements.troubleshootInfo.textContent = '';
+      elements.troubleshootBtn.style.display = 'none';
+      elements.troubleshootInfo.style.display = 'none';
+      isModelLoading = true;
+      isModelLoaded = false;
+      session?.finalize?.();
+      session = null;
+      try {
+        const cachedModelBuffer = await checkModelInIndexedDB(modelConfig.key);
+        if (cachedModelBuffer) {
+          updateStatus(`Carregando ${selectedModel} do cache...`);
+          showOverlay(`Carregando ${selectedModel} do cache...`);
+          session = await ort.InferenceSession.create(cachedModelBuffer, { executionProviders: ['webgl', 'wasm'] });
+          updateStatus(`Modelo ${selectedModel} carregado do cache!`);
+        } else {
+          updateStatus(`Baixando modelo ${selectedModel}...`);
+          showOverlay(`Baixando modelo ${selectedModel}...`);
+          const response = await fetch(modelConfig.url);
+          if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
+          const reader = response.body.getReader();
+          const length = +response.headers.get('Content-Length') || 0;
+          let received = 0;
+          const chunks = [];
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            received += value.length;
+            if (length) {
+              const progress = Math.min(100, Math.floor((received / length) * 100));
+              updateStatus(`Baixando ${selectedModel}... ${progress}%`);
+              elements.progressBar.style.width = `${progress}%`;
+            }
+          }
+          const data = new Uint8Array(received);
+          let pos = 0;
+          for (const chunk of chunks) {
+            data.set(chunk, pos);
+            pos += chunk.length;
+          }
+          updateStatus(`Salvando ${selectedModel} no cache local...`);
+          await saveModelToIndexedDB(modelConfig.key, data.buffer);
+          updateStatus(`Carregando modelo ${selectedModel}...`);
+          session = await ort.InferenceSession.create(data.buffer, { executionProviders: ['webgl', 'wasm'] });
+          updateStatus(`Modelo ${selectedModel} carregado!`);
+        }
+        isModelLoaded = true;
+        isModelLoading = false;
+        hideOverlay();
+        return session;
+      } catch (e) {
+        isModelLoading = false;
+        isModelLoaded = false;
+        session = null;
+        showError(`Erro ao carregar modelo ${selectedModel}`, e.message);
+        hideOverlay();
+        throw e;
+      }
+    }
+    function preprocessTile(canvas, targetTileSize) {
+      const { width, height } = canvas;
+      if (width <= 0 || height <= 0) throw new Error(`Dimensões de tile inválidas: ${width}x${height}`);
+      const tileCtx = canvas.getContext('2d', { willReadFrequently: true });
+      if (!tileCtx) throw new Error('Contexto de canvas de tile inválido');
+      let sourceCanvas = canvas;
+      if (width < targetTileSize || height < targetTileSize) {
+        const paddedCanvas = document.createElement('canvas');
+        paddedCanvas.width = targetTileSize;
+        paddedCanvas.height = targetTileSize;
+        const paddedCtx = paddedCanvas.getContext('2d');
+        if (!paddedCtx) throw new Error('Falha ao criar contexto de canvas para padding do tile');
+        paddedCtx.drawImage(canvas, 0, 0, width, height);
+        sourceCanvas = paddedCanvas;
+      }
+      const finalCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
+      if (!finalCtx) throw new Error('Contexto final do tile indisponível');
+      const { data } = finalCtx.getImageData(0, 0, targetTileSize, targetTileSize);
+      const input = new Float32Array(1 * 3 * targetTileSize * targetTileSize);
+      let offset = 0;
+      for (let c = 0; c < 3; c++) {
+        for (let h = 0; h < targetTileSize; h++) {
+          for (let w = 0; w < targetTileSize; w++) {
+            const pixelIndex = (h * targetTileSize + w) * 4;
+            input[offset++] = data[pixelIndex + c] / 255.0;
+          }
+        }
+      }
+      return new ort.Tensor('float32', input, [1, 3, targetTileSize, targetTileSize]);
+    }
+    function postprocessTile(tensor, targetWidth, targetHeight) {
+      if (!tensor || !tensor.data) throw new Error('Tensor de saída inválido');
+      const [_, c, th, tw] = tensor.dims;
+      if (c !== 3) throw new Error(`Formato de tensor inválido: C=${c}`);
+      if (tw <= 0 || th <= 0) throw new Error(`Dimensões de saída inválidas: ${tw}x${th}`);
+      const outputCanvas = document.createElement('canvas');
+      outputCanvas.width = tw;
+      outputCanvas.height = th;
+      const outCtx = outputCanvas.getContext('2d', { alpha: false });
+      if (!outCtx) throw new Error('Falha ao criar contexto para tile de saída');
+      const imgData = outCtx.createImageData(tw, th);
+      const data = imgData.data;
+      const size = th * tw;
+      const tensorData = tensor.data;
+      for (let i = 0; i < size; i++) {
+        const pixelOffset = i * 4;
+        data[pixelOffset] = Math.max(0, Math.min(255, tensorData[i] * 255));
+        data[pixelOffset + 1] = Math.max(0, Math.min(255, tensorData[i + size] * 255));
+        data[pixelOffset + 2] = Math.max(0, Math.min(255, tensorData[i + 2 * size] * 255));
+        data[pixelOffset + 3] = 255;
+      }
+      outCtx.putImageData(imgData, 0, 0);
+      if (tw === targetWidth && th === targetHeight) {
+        return outputCanvas;
+      } else {
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = targetWidth;
+        croppedCanvas.height = targetHeight;
+        const cropCtx = croppedCanvas.getContext('2d', { alpha: false });
+        if (!cropCtx) throw new Error('Falha ao criar contexto para corte do tile');
+        cropCtx.drawImage(outputCanvas, 0, 0, targetWidth, targetHeight, 0, 0, targetWidth, targetHeight);
+        return croppedCanvas;
+      }
+    }
+    function resizeImageCanvas(imgCanvas) {
+      if (!imgCanvas.width || !imgCanvas.height) throw new Error('Canvas inválido para redimensionamento');
+      if (!elements.limitSize.checked) {
+        logDebug(`Tamanho original mantido: ${imgCanvas.width}x${imgCanvas.height}`);
+        return imgCanvas;
+      }
+      const maxSize = CONFIG[selectedModel].scale === 2 ? MAX_SIZE_2X : MAX_SIZE_4X;
+      const needsResize = imgCanvas.width > maxSize || imgCanvas.height > maxSize;
+      if (!needsResize) {
+        return imgCanvas;
+      }
+      const canvas = document.createElement('canvas');
+      const resizeCtx = canvas.getContext('2d');
+      if (!resizeCtx) throw new Error('Falha ao criar contexto para redimensionamento');
+      let targetWidth = imgCanvas.width;
+      let targetHeight = imgCanvas.height;
+      const ratio = imgCanvas.width / imgCanvas.height;
+      if (imgCanvas.width > imgCanvas.height) {
+        targetWidth = maxSize;
+        targetHeight = Math.round(maxSize / ratio);
+      } else {
+        targetHeight = maxSize;
+        targetWidth = Math.round(maxSize * ratio);
+      }
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      logDebug(`Redimensionando imagem com borda de ${imgCanvas.width}x${imgCanvas.height} para ${targetWidth}x${targetHeight}`);
+      resizeCtx.drawImage(imgCanvas, 0, 0, imgCanvas.width, imgCanvas.height, 0, 0, targetWidth, targetHeight);
+      return canvas;
+    }
+    function cropOutputCanvas(sourceCanvas) {
+      const scale = CONFIG[selectedModel].scale;
+      const CROP_RIGHT = BASE_CROP * (scale / 2); // 16 for 2x, 32 for 4x
+      const CROP_BOTTOM = BASE_CROP * (scale / 2); // 16 for 2x, 32 for 4x
+      const newWidth = sourceCanvas.width - CROP_RIGHT;
+      const newHeight = sourceCanvas.height - CROP_BOTTOM;
+      if (newWidth <= 0 || newHeight <= 0) {
+        throw new Error(`Dimensões após corte inválidas: ${newWidth}x${newHeight}`);
+      }
+      const croppedCanvas = document.createElement('canvas');
+      croppedCanvas.width = newWidth;
+      croppedCanvas.height = newHeight;
+      const croppedCtx = croppedCanvas.getContext('2d', { alpha: false });
+      if (!croppedCtx) throw new Error('Falha ao criar contexto para corte final');
+      croppedCtx.drawImage(sourceCanvas, 0, 0, newWidth, newHeight, 0, 0, newWidth, newHeight);
+      logDebug(`Imagem cortada: -${CROP_RIGHT}px direita, -${CROP_BOTTOM}px baixo`);
+      return croppedCanvas;
+    }
+    async function processImageWithTiles(borderedImgCanvas, session) {
+      if (!ctx.input || !ctx.output) {
+        showError('Erro de renderização', 'Contexto de canvas indisponível');
+        return;
+      }
+      const scale = CONFIG[selectedModel].scale;
+      const modelConfig = MODELS[selectedModel];
+      const tileSize = modelConfig.tileSize;
+      const inputName = modelConfig.inputName;
+      const outputName = modelConfig.outputName;
+      const overlap = OVERLAP;
+      const iw = borderedImgCanvas.width;
+      const ih = borderedImgCanvas.height;
+      const ow = iw * scale;
+      const oh = ih * scale;
+      processedImageDimensions = { width: iw, height: ih };
+      elements.inputCanvas.width = iw;
+      elements.inputCanvas.height = ih;
+      elements.outputCanvas.width = ow;
+      elements.outputCanvas.height = oh;
+      const containerAspectRatio = iw / ih;
+      elements.canvasContainer.style.aspectRatio = `${containerAspectRatio}`;
+      elements.inputPreview.classList.add('hidden');
+      elements.inputCanvas.classList.remove('hidden');
+      elements.outputCanvas.classList.remove('hidden');
+      ctx.input.fillStyle = 'white';
+      ctx.input.fillRect(0, 0, iw, ih);
+      ctx.input.drawImage(borderedImgCanvas, 0, 0);
+      ctx.output.fillStyle = 'white';
+      ctx.output.fillRect(0, 0, ow, oh);
+      updateStatus('Processando...');
+      showOverlay('Processando imagem...');
+      logDebug(`Iniciando processamento: ${iw}x${ih} -> ${ow}x${oh}, Scale: ${scale}x`);
+      const effectiveTileSize = tileSize - 2 * overlap;
+      if (effectiveTileSize <= 0) {
+        showError('Configuração inválida', `Overlap (${overlap}) muito grande para o tamanho do tile (${tileSize})`);
+        hideOverlay();
+        return;
+      }
+      const numTilesX = Math.ceil(iw / effectiveTileSize);
+      const numTilesY = Math.ceil(ih / effectiveTileSize);
+      const totalTiles = numTilesX * numTilesY;
+      startOverlayTimer(totalTiles);
+      let tilesDone = 0;
+      const tileCanvas = document.createElement('canvas');
+      const tileCtx = tileCanvas.getContext('2d', { willReadFrequently: true });
+      if (!tileCtx) {
+        showError('Erro de renderização', 'Falha ao criar contexto de canvas para tile');
+        hideOverlay();
+        return;
+      }
+      for (let y = 0; y < numTilesY; y++) {
+        for (let x = 0; x < numTilesX; x++) {
+          if (isProcessingCancelled) {
+            logDebug("Processamento cancelado.");
+            break;
+          }
+          const sx = Math.max(0, x * effectiveTileSize - overlap);
+          const sy = Math.max(0, y * effectiveTileSize - overlap);
+          const sw = Math.min(tileSize, iw - sx);
+          const sh = Math.min(tileSize, ih - sy);
+          if (sw <= 0 || sh <= 0) {
+            logDebug(`Tile (${x}, ${y}) pulado (dimensões inválidas ${sw}x${sh})`);
+            continue;
+          }
+          tileCanvas.width = sw;
+          tileCanvas.height = sh;
+          tileCtx.clearRect(0, 0, sw, sh);
+          tileCtx.drawImage(borderedImgCanvas, sx, sy, sw, sh, 0, 0, sw, sh);
+          let inputTensor, results, outputTileCanvas;
+          try {
+            inputTensor = preprocessTile(tileCanvas, tileSize);
+            const feeds = { [inputName]: inputTensor };
+            results = await session.run(feeds);
+            if (!results[outputName]) {
+              throw new Error(`Saída '${outputName}' não encontrada: ${Object.keys(results).join(', ')}`);
+            }
+            const outputTileTargetWidth = sw * scale;
+            const outputTileTargetHeight = sh * scale;
+            outputTileCanvas = postprocessTile(results[outputName], outputTileTargetWidth, outputTileTargetHeight);
+          } catch (e) {
+            showError(`Erro ao processar tile (${x}, ${y})`, e.message);
+            isProcessingCancelled = true;
+            break;
+          }
+          const dx = (x * effectiveTileSize) * scale;
+          const dy = (y * effectiveTileSize) * scale;
+          let srcX = (x > 0) ? overlap * scale : 0;
+          let srcY = (y > 0) ? overlap * scale : 0;
+          let srcW = effectiveTileSize * scale;
+          let srcH = effectiveTileSize * scale;
+          srcW = Math.min(srcW, outputTileCanvas.width - srcX);
+          srcH = Math.min(srcH, outputTileCanvas.height - srcY);
+          let drawW = srcW;
+          let drawH = srcH;
+          if (dx + drawW > ow) drawW = ow - dx;
+          if (dy + drawH > oh) drawH = oh - dy;
+          if (srcW > 0 && srcH > 0 && drawW > 0 && drawH > 0) {
+            ctx.output.drawImage(
+              outputTileCanvas,
+              srcX, srcY,
+              srcW, srcH,
+              dx, dy,
+              drawW, drawH
+            );
+          }
+          tilesDone++;
+          currentProgress.done = tilesDone;
+          updateProgressBar(tilesDone, totalTiles);
+          if (tilesDone % 5 === 0 || tilesDone === totalTiles) {
+            updateStatus(`Processando: ${tilesDone}/${totalTiles} tiles...`);
+          }
+          await new Promise(resolve => setTimeout(resolve, 0));
+        }
+        if (isProcessingCancelled) break;
+      }
+      if (!isProcessingCancelled) {
+        try {
+          const croppedCanvas = cropOutputCanvas(elements.outputCanvas);
+          elements.outputCanvas.width = croppedCanvas.width;
+          elements.outputCanvas.height = croppedCanvas.height;
+          ctx.output.drawImage(croppedCanvas, 0, 0);
+        } catch (e) {
+          showError('Erro ao cortar imagem', e.message);
+          isProcessingCancelled = true;
+        }
+      }
+      hideOverlay();
+      if (isProcessingCancelled) {
+        updateStatus(`Processamento cancelado após ${tilesDone}/${totalTiles} tiles.`);
+        elements.downloadBtn.disabled = true;
+      } else {
+        updateStatus('Concluído!');
+        resetView();
+        elements.downloadBtn.disabled = false;
+      }
+      elements.processBtn.disabled = false;
+    }
+    function resetView() {
+      zoomLevel = 1;
+      translateX = 0;
+      translateY = 0;
+      updateCanvasTransform();
+    }
+    function updateCanvasTransform() {
+      const transform = `translate(${translateX}px, ${translateY}px) scale(${zoomLevel})`;
+      elements.inputCanvas.style.transform = transform;
+      elements.outputCanvas.style.transform = transform;
+    }
+    function handleZoom(e) {
+      e.preventDefault();
+      const now = Date.now();
+      if (now - lastZoomTime < ZOOM_DEBOUNCE_MS) return;
+      lastZoomTime = now;
+      if (!elements.imageComparison) return;
+      const rect = elements.imageComparison.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      const currentCanvasRect = elements.inputCanvas.getBoundingClientRect();
+      const canvasOriginX = currentCanvasRect.left - rect.left;
+      const canvasOriginY = currentCanvasRect.top - rect.top;
+      const mouseXOnCanvas = (mouseX - canvasOriginX) / zoomLevel;
+      const mouseYOnCanvas = (mouseY - canvasOriginY) / zoomLevel;
+      const delta = e.deltaY < 0 ? 0.1 : -0.1;
+      const newZoomLevel = Math.max(minZoom, Math.min(maxZoom, zoomLevel * (1 + delta)));
+      if (newZoomLevel === zoomLevel) return;
+      translateX = mouseX - mouseXOnCanvas * newZoomLevel;
+      translateY = mouseY - mouseYOnCanvas * newZoomLevel;
+      zoomLevel = newZoomLevel;
+      updateCanvasTransform();
+    }
+    function startPan(e) {
+      isPanning = true;
+      lastPanX = e.clientX;
+      lastPanY = e.clientY;
+      elements.mainContainer.classList.add('panning');
+      elements.imageComparison.style.userSelect = 'none';
+    }
+    function panMove(e) {
+      if (!isPanning) return;
+      const dx = e.clientX - lastPanX;
+      const dy = e.clientY - lastPanY;
+      translateX += dx;
+      translateY += dy;
+      lastPanX = e.clientX;
+      lastPanY = e.clientY;
+      updateCanvasTransform();
+    }
+    function endPan() {
+      if (isPanning) {
+        isPanning = false;
+        elements.mainContainer.classList.remove('panning');
+        elements.imageComparison.style.userSelect = '';
+      }
+    }
+    function checkWebGL() {
+      try {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+        if (!gl) {
+          showError('WebGL indisponível', 'Seu navegador não suporta WebGL.');
+          return false;
+        }
+        logDebug(`WebGL Version: ${gl.getParameter(gl.VERSION)}`);
+        logDebug(`WebGL Renderer: ${gl.getParameter(gl.RENDERER)}`);
+        return true;
+      } catch (e) {
+        showError('Erro ao verificar WebGL', e.message);
+        return false;
+      }
+    }
+    function prepareImage() {
+      return new Promise((resolve, reject) => {
+        if (!selectedFile) return reject(new Error('Nenhuma imagem selecionada.'));
+        if (!selectedFile.type.startsWith('image/')) return reject(new Error('Arquivo inválido.'));
+        const img = new Image();
+        const url = URL.createObjectURL(selectedFile);
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          const origW = img.width;
+          const origH = img.height;
+          if (origW > 4000 || origH > 4000) return reject(new Error('Imagem muito grande (original máx: 4000px)'));
+          if (origW < 10 || origH < 10) return reject(new Error('Imagem muito pequena (original mín: 10px)'));
+          const borderedW = origW + 2 * BORDER_SIZE;
+          const borderedH = origH + 2 * BORDER_SIZE;
+          const borderedCanvas = document.createElement('canvas');
+          borderedCanvas.width = borderedW;
+          borderedCanvas.height = borderedH;
+          const borderedCtx = borderedCanvas.getContext('2d', { alpha: false });
+          if (!borderedCtx) return reject(new Error('Falha ao criar contexto para adicionar borda'));
+          borderedCtx.fillStyle = 'white';
+          borderedCtx.fillRect(0, 0, borderedW, borderedH);
+          borderedCtx.drawImage(img, BORDER_SIZE, BORDER_SIZE, origW, origH);
+          logDebug(`Imagem com borda criada: ${borderedW}x${borderedH}`);
+          const finalCanvas = resizeImageCanvas(borderedCanvas);
+          resolve(finalCanvas);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error('Erro ao carregar a imagem.'));
+        };
+        img.src = url;
+      });
+    }
+    async function processImage() {
+      elements.processBtn.disabled = true;
+      elements.downloadBtn.disabled = true;
+      elements.status.textContent = 'Preparando...';
+      elements.error.textContent = '';
+      elements.troubleshootBtn.style.display = 'none';
+      elements.troubleshootInfo.style.display = 'none';
+      elements.inputCanvas.classList.add('hidden');
+      elements.outputCanvas.classList.add('hidden');
+      isProcessingCancelled = false;
+      debugInfo = [];
+      if (!checkWebGL()) {
+        elements.processBtn.disabled = !selectedFile;
+        return;
+      }
+      showOverlay('Iniciando processamento...');
+      try {
+        const [borderedCanvas, sessionInstance] = await Promise.all([prepareImage(), loadModel()]);
+        if (!sessionInstance) throw new Error(`Falha ao carregar o modelo ${selectedModel}.`);
+        if (!borderedCanvas) throw new Error('Falha ao preparar a imagem.');
+        await processImageWithTiles(borderedCanvas, sessionInstance);
+      } catch (e) {
+        showError(`Erro no processamento: ${e.message}`, e.stack);
+        elements.processBtn.disabled = !selectedFile;
+        hideOverlay();
+      }
+    }
+    function previewImage(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        elements.inputPreview.onload = () => {
+          zoomLevel = 1;
+          translateX = 0;
+          translateY = 0;
+          elements.inputPreview.style.transform = '';
+          elements.inputCanvas.style.transform = '';
+          elements.outputCanvas.style.transform = '';
+          elements.canvasContainer.style.aspectRatio = `${elements.inputPreview.naturalWidth / elements.inputPreview.naturalHeight}`;
+          elements.inputPreview.classList.remove('hidden');
+          elements.inputCanvas.classList.add('hidden');
+          elements.outputCanvas.classList.add('hidden');
+          elements.downloadBtn.disabled = true;
+          elements.processBtn.disabled = false;
+          updateStatus('Imagem carregada. Pronto para processar.');
+        };
+        elements.inputPreview.onerror = () => {
+          showError('Erro ao exibir pré-visualização', 'Não foi possível renderizar a imagem.');
+          elements.processBtn.disabled = true;
+        };
+        elements.inputPreview.src = e.target.result;
+      };
+      reader.onerror = () => {
+        showError('Erro ao ler arquivo', 'Não foi possível ler a imagem.');
+        elements.processBtn.disabled = true;
+      };
+      reader.readAsDataURL(file);
+    }
+    async function init() {
+      updateStatus('Inicializando...');
+      if (!ctx.input || !ctx.output) {
+        showError('Erro crítico', 'Contexto de canvas indisponível.');
+        return;
+      }
+      document.getElementById('inputImage').addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (file) {
+          selectedFile = file;
+          previewImage(file);
+        } else {
+          selectedFile = null;
+          elements.inputPreview.classList.add('hidden');
+          elements.inputCanvas.classList.add('hidden');
+          elements.outputCanvas.classList.add('hidden');
+          elements.processBtn.disabled = true;
+          elements.downloadBtn.disabled = true;
+          updateStatus('Nenhum arquivo selecionado.');
+        }
+      });
+      elements.processBtn.addEventListener('click', () => {
+        if (!elements.processBtn.disabled) processImage();
+      });
+      elements.downloadBtn.addEventListener('click', () => {
+        if (!elements.downloadBtn.disabled && !elements.outputCanvas.classList.contains('hidden')) {
+          elements.outputCanvas.toBlob(blob => {
+            if (!blob) {
+              showError('Erro ao baixar', 'Falha ao gerar blob.');
+              return;
+            }
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            link.download = `CloudUpscaler_${selectedModel}_${timestamp}.png`;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            URL.revokeObjectURL(link.href);
+            logDebug(`Imagem baixada: ${link.download}`);
+          }, 'image/png');
+        }
+      });
+      elements.troubleshootBtn.addEventListener('click', () => {
+        const show = elements.troubleshootInfo.style.display !== 'block';
+        elements.troubleshootInfo.style.display = show ? 'block' : 'none';
+        elements.troubleshootBtn.textContent = show ? 'Ocultar Detalhes' : 'Detalhes Técnicos';
+        if (show) {
+          elements.troubleshootInfo.textContent = debugInfo.join('\n\n');
+          elements.troubleshootInfo.scrollTop = elements.troubleshootInfo.scrollHeight;
+        }
+      });
+      elements.modelSelect.addEventListener('change', () => {
+        const newModel = elements.modelSelect.value;
+        if (newModel === selectedModel && isModelLoaded) return;
+        selectedModel = newModel;
+        isModelLoaded = false;
+        session = null;
+        updateStatus(`Mudando para modelo ${selectedModel}...`);
+        elements.processBtn.disabled = true;
+        elements.downloadBtn.disabled = true;
+        loadModel().then(() => {
+          updateStatus(`Modelo ${selectedModel} pronto! ${selectedFile ? 'Pode processar.' : 'Aguardando imagem...'}`);
+          elements.processBtn.disabled = !selectedFile;
+        }).catch(() => {
+        });
+      });
+      elements.cancelBtn.addEventListener('click', () => {
+        if (!isProcessingCancelled) {
+          isProcessingCancelled = true;
+          updateStatus("Cancelando processamento...");
+          elements.overlayMessage.textContent = "Cancelando...";
+          elements.cancelBtn.disabled = true;
+          if (overlayTimerInterval) {
+            clearInterval(overlayTimerInterval);
+            overlayTimerInterval = null;
+            elements.remainingTime.textContent = "Cancelado.";
+          }
+          logDebug("Cancelamento solicitado pelo usuário.");
+        }
+      });
+      elements.imageComparison.addEventListener('mousedown', startPan);
+      document.addEventListener('mousemove', panMove);
+      document.addEventListener('mouseup', endPan);
+      document.addEventListener('mouseleave', endPan);
+      elements.imageComparison.addEventListener('wheel', handleZoom, { passive: false });
+      window.addEventListener('resize', updateCanvasTransform);
+      elements.limitSize.addEventListener('change', () => {
+        logDebug(`Limitar Tamanho: ${elements.limitSize.checked ? 'Ativado' : 'Desativado'}`);
+        if (selectedFile) {
+          previewImage(selectedFile);
+        }
+      });
+      await initDB();
+      if (!checkWebGL()) {
+        elements.processBtn.disabled = true;
+        elements.modelSelect.disabled = true;
+        return;
+      }
+      updateStatus('Verificando modelo inicial...');
+      try {
+        await loadModel();
+        updateStatus(`Modelo ${selectedModel} pronto! Aguardando imagem...`);
+      } catch (e) {
+        updateStatus('Falha ao carregar modelo inicial.');
+        elements.processBtn.disabled = true;
+      }
+    }
+    init();
+  </script>
+</body>
+</html>
