@@ -1,8 +1,8 @@
-<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brasil API - Consulta de Dados</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -28,27 +28,23 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Roboto', sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-
         header {
             text-align: center;
             margin-bottom: 30px;
             padding: 20px 0;
             border-bottom: 1px solid var(--border-color);
         }
-
         .logo {
             display: flex;
             align-items: center;
@@ -56,23 +52,19 @@
             gap: 10px;
             margin-bottom: 10px;
         }
-
-        .logo i {
-            font-size: 2rem;
-            color: var(--primary-color);
+        .logo img {
+            width: 40px;
+            height: 40px;
         }
-
         header h1 {
             font-size: 2.5rem;
             font-weight: 700;
             color: var(--primary-color);
         }
-
         header p {
             font-size: 1.2rem;
             color: var(--text-light);
         }
-
         nav ul {
             display: flex;
             list-style: none;
@@ -82,7 +74,6 @@
             overflow: hidden;
             margin-bottom: 30px;
         }
-
         nav li {
             flex: 1;
             text-align: center;
@@ -95,20 +86,16 @@
             justify-content: center;
             gap: 8px;
         }
-
         nav li:not(:last-child) {
             border-right: 1px solid var(--border-color);
         }
-
         nav li:hover {
             background-color: #f1f5f9;
         }
-
         nav li.active {
             background-color: var(--primary-color);
             color: white;
         }
-
         .tab-content {
             display: none;
             background-color: var(--card-color);
@@ -116,24 +103,20 @@
             padding: 30px;
             box-shadow: var(--shadow);
         }
-
         .tab-content.active {
             display: block;
         }
-
         h2 {
             margin-bottom: 20px;
             color: var(--primary-color);
             font-size: 1.8rem;
             font-weight: 600;
         }
-
         .search-container {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
         }
-
         input {
             flex: 1;
             padding: 12px 15px;
@@ -142,12 +125,10 @@
             font-size: 1rem;
             transition: border-color 0.3s;
         }
-
         input:focus {
             outline: none;
             border-color: var(--primary-color);
         }
-
         button {
             background-color: var(--primary-color);
             color: white;
@@ -161,11 +142,9 @@
             align-items: center;
             gap: 8px;
         }
-
         button:hover {
             background-color: var(--primary-dark);
         }
-
         .print-button {
             background-color: var(--secondary-color);
             color: white;
@@ -179,15 +158,12 @@
             gap: 8px;
             margin-top: 15px;
         }
-
         .print-button:hover {
             filter: brightness(110%);
         }
-
         .print-button i {
             font-size: 1rem;
         }
-
         .result-container {
             margin-top: 30px;
             border: 1px solid var(--border-color);
@@ -195,7 +171,6 @@
             min-height: 200px;
             position: relative;
         }
-
         .loading {
             display: none;
             flex-direction: column;
@@ -205,85 +180,71 @@
             gap: 15px;
             color: var(--text-light);
         }
-
         .loading i {
             font-size: 2rem;
             color: var(--primary-color);
         }
-
         .content {
             padding: 20px;
         }
-
         .data-table {
             width: 100%;
             border-collapse: collapse;
         }
-
         .data-table th,
         .data-table td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
-
         .data-table th {
             background-color: #f8fafc;
             font-weight: 500;
         }
-
         .data-table tr:last-child td {
             border-bottom: none;
         }
-
         .data-card {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
-
         .data-item {
             display: flex;
             align-items: flex-start;
             gap: 10px;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
+            padding-bottom: 8px;
+            margin-bottom: 0;
         }
-
         .data-item:last-child {
             border-bottom: none;
         }
-
         .data-item i {
             color: var(--primary-color);
             min-width: 24px;
             text-align: center;
         }
-
         .data-label {
             font-weight: 500;
-            margin-right: 10px;
-            min-width: 150px;
+            margin-right: 8px;
+            min-width: 120px;
         }
-
         .data-value {
             flex: 1;
         }
-
         .error-message {
             color: var(--error-color);
             padding: 20px;
             text-align: center;
             font-weight: 500;
         }
-
         .success-message {
             color: var(--success-color);
             padding: 20px;
             text-align: center;
             font-weight: 500;
         }
-
         footer {
             margin-top: 40px;
             text-align: center;
@@ -291,94 +252,161 @@
             border-top: 1px solid var(--border-color);
             color: var(--text-light);
         }
-
         footer a {
             color: var(--primary-color);
             text-decoration: none;
         }
-
         footer i {
             color: var(--error-color);
         }
-
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
             }
-
             header h1 {
                 font-size: 2rem;
             }
-
             nav ul {
                 flex-direction: column;
             }
-
             nav li:not(:last-child) {
                 border-right: none;
                 border-bottom: 1px solid var(--border-color);
             }
-
             .search-container {
                 flex-direction: column;
             }
-
             button {
                 width: 100%;
                 justify-content: center;
             }
-
             .tab-content {
                 padding: 20px 15px;
             }
         }
-
         @media print {
             body {
                 background: white;
-                color: black;
+                color: #222;
+                margin: 1cm !important;
+                font-size: 11.5pt;
             }
-
-            .tab-content {
-                display: none !important;
-                box-shadow: none;
+            .container {
+                max-width: none;
+                padding: 0;
             }
-
-            .tab-content.active {
-                display: block !important;
-            }
-
-            header,
+            header, 
             nav,
             .search-container,
             .print-button,
             footer {
                 display: none !important;
             }
-
-            .data-card,
-            .data-table {
-                color: black;
+            .tab-content {
+                display: none !important;
+                box-shadow: none;
+                padding: 0 !important;
             }
-
+            .tab-content.active {
+                display: block !important;
+            }
+            .result-container {
+                border: none !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                min-height: 0 !important;
+            }
+            .content {
+                padding: 0 !important;
+            }
+            h2 {
+                font-size: 18pt !important;
+                padding: 0 0 5px 0 !important;
+                margin-bottom: 10px !important;
+                color: #222 !important;
+                border-bottom: 1px solid #aaa !important;
+                text-align: left !important;
+            }
+            .data-card {
+                gap: 2px !important;
+                margin: 0 !important;
+            }
+            .data-item {
+                display: flex;
+                align-items: start;
+                gap: 6px !important;
+                border-bottom: 1px dotted #bbb !important;
+                margin-bottom: 0 !important;
+                padding: 2px 0 2px 0 !important;
+                font-size: 11pt !important;
+                page-break-inside: avoid !important;
+            }
+            .data-item:last-child {
+                border-bottom: none !important;
+            }
+            .data-item i {
+                color: #2563eb !important;
+                min-width: 0 !important;
+                font-size: 10pt !important;
+                margin-right: 3px !important;
+            }
+            .data-label {
+                font-weight: 600 !important;
+                min-width: 95px !important;
+                margin-right: 6px !important;
+                color: #233 !important;
+            }
+            .data-value {
+                color: #222 !important;
+                font-weight: 400 !important;
+                word-break: break-word;
+            }
+            .data-table {
+                width: 100%;
+                border: 1px solid #bbb !important;
+                border-collapse: collapse;
+                font-size: 11pt !important;
+                margin-bottom: 5px !important;
+            }
             .data-table th,
             .data-table td {
-                border: 1px solid #ddd;
+                padding: 5px 8px !important;
+                border: 1px solid #bbb !important;
             }
-
-            .data-item {
-                margin-bottom: 10px;
-                page-break-inside: avoid;
+            .data-table th {
+                background: #f3f4f6 !important;
+                font-weight: 600 !important;
             }
-
-            .result-container {
-                border: none;
-                box-shadow: none;
+            .data-table tr:last-child td {
+                border-bottom: 1px solid #bbb !important;
             }
-
-            h2 {
-                margin-bottom: 20px;
-                color: black;
+            ul, ol {
+                margin: 0 0 0 16px !important;
+                padding: 0 !important;
+            }
+            .error-message, .success-message {
+                color: #e11d48 !important;
+                border: 1px solid #e11d48 !important;
+                border-radius: 3px;
+                font-size: 12pt !important;
+                font-weight: bold !important;
+                padding: 8px !important;
+                margin: 8px 0 !important;
+                text-align: center !important;
+            }
+            .tab-content, .data-card, .data-table {
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+            }
+            .content[data-print-date]:after {
+                content: "Impresso em: " attr(data-print-date);
+                display: block;
+                margin-top: 14px;
+                font-size: 9pt !important;
+                color: #888;
+                border-top: 1px solid #bbb;
+                padding-top: 4px;
+                text-align: right !important;
             }
         }
     </style>
@@ -387,8 +415,8 @@
     <div class="container">
         <header>
             <div class="logo">
-                <i class="fas fa-map-marker-alt"></i>
-                <h1>Consulta de Dados Públicos</h1>
+                <img src="/logo.png" alt="Brasil API Logo" width="40" height="40">
+                <h1>Brasil API</h1>
             </div>
             <p>Consulta de dados públicos brasileiros</p>
         </header>
@@ -483,7 +511,6 @@
         <footer>
         </footer>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // API base URL
@@ -512,21 +539,19 @@
                         switch (tabId) {
                             case 'banks':
                                 if (initialSearch === 'all') {
-                                    // Clear input before searching all banks
                                     document.getElementById('bank-input').value = '';
                                     searchBanks();
                                 }
                                 break;
                             case 'feriados':
                                 if (initialSearch === 'current_year') {
-                                    // Set current year before searching holidays
                                     document.getElementById('feriados-input').value = new Date().getFullYear();
                                     searchFeriados();
                                 }
                                 break;
                         }
                     } else {
-                         // Clear content and hide loading when switching tabs without initial search
+                        // Clear content and hide loading for tabs without initial search.
                         const resultContainer = activeContent.querySelector('.result-container');
                         const contentElement = resultContainer.querySelector('.content');
                         const loadingElement = resultContainer.querySelector('.loading');
@@ -543,22 +568,15 @@
             const cnpjLoading = document.getElementById('cnpj-loading');
             const cnpjContent = document.getElementById('cnpj-content');
 
-            // Format CNPJ as user types
             cnpjInput.addEventListener('input', (e) => {
-                // Remove any non-digit character first
                 let value = e.target.value.replace(/\D/g, '');
-
-                // Truncate to max 14 digits
                 value = value.slice(0, 14);
-
-                // Format with masks if there's content
                 if (value.length > 0) {
                     value = value.replace(/^(\d{2})(\d)/g, '$1.$2');
                     value = value.replace(/^(\d{2})\.(\d{3})(\d)/g, '$1.$2.$3');
                     value = value.replace(/\.(\d{3})(\d)/g, '.$1/$2');
                     value = value.replace(/(\d{4})(\d)/g, '$1-$2');
                 }
-
                 e.target.value = value;
             });
 
@@ -568,29 +586,23 @@
 
             cnpjInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    e.preventDefault(); // Prevent default form submission if input is inside a form
+                    e.preventDefault();
                     searchCnpj();
                 }
             });
 
             function searchCnpj() {
-                // Get only numbers from input, removing any formatting
                 const cnpj = cnpjInput.value.replace(/\D/g, '');
-
                 if (cnpj.length !== 14) {
                     cnpjContent.innerHTML = `<div class="error-message">
                         <i class="fas fa-exclamation-circle"></i>
                         CNPJ inválido. Digite os 14 dígitos do CNPJ.
                     </div>`;
-                    addPrintButton(cnpjContent, 'CNPJ'); // Add print button even on error
+                    addPrintButton(cnpjContent, 'CNPJ');
                     return;
                 }
-
-                // Show loading
                 cnpjContent.innerHTML = '';
                 cnpjLoading.style.display = 'flex';
-
-                // Fetch data
                 fetch(`${API_BASE_URL}/cnpj/v1/${cnpj}`)
                     .then(response => {
                         if (!response.ok) {
@@ -608,153 +620,83 @@
                             <i class="fas fa-exclamation-circle"></i>
                             ${error.message}
                         </div>`;
-                         addPrintButton(cnpjContent, 'CNPJ'); // Add print button even on error
+                        addPrintButton(cnpjContent, 'CNPJ');
                     });
             }
 
             function displayCnpjData(data) {
                 const html = `
                     <div class="data-card">
-                        <div class="data-item">
-                            <i class="fas fa-building"></i>
-                            <div>
-                                <span class="data-label">Razão Social:</span>
-                                <span class="data-value">${data.razao_social || 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-building"></i>
+                            <div><span class="data-label">Razão Social:</span><span class="data-value">${data.razao_social || 'Não informado'}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-store"></i>
-                            <div>
-                                <span class="data-label">Nome Fantasia:</span>
-                                <span class="data-value">${data.nome_fantasia || 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-store"></i>
+                            <div><span class="data-label">Nome Fantasia:</span><span class="data-value">${data.nome_fantasia || 'Não informado'}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-id-card"></i>
-                            <div>
-                                <span class="data-label">CNPJ:</span>
-                                <span class="data-value">${formatCnpj(data.cnpj)}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-id-card"></i>
+                            <div><span class="data-label">CNPJ:</span><span class="data-value">${formatCnpj(data.cnpj)}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-calendar-alt"></i>
-                            <div>
-                                <span class="data-label">Data de Abertura:</span>
-                                <span class="data-value">${formatDate(data.data_inicio_atividade)}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-calendar-alt"></i>
+                            <div><span class="data-label">Data de Abertura:</span><span class="data-value">${formatDate(data.data_inicio_atividade)}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-check-circle"></i>
-                            <div>
-                                <span class="data-label">Situação Cadastral:</span>
-                                <span class="data-value">${data.descricao_situacao_cadastral || 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-check-circle"></i>
+                            <div><span class="data-label">Situação Cadastral:</span><span class="data-value">${data.descricao_situacao_cadastral || 'Não informado'}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <div>
-                                <span class="data-label">Endereço:</span>
-                                <span class="data-value">
-                                    ${data.descricao_tipo_de_logradouro || ''} ${data.logradouro || ''}, ${data.numero || 'S/N'}
-                                    ${data.complemento ? ' - ' + data.complemento : ''}
-                                    <br>
-                                    ${data.bairro || ''} - ${data.municipio || ''} / ${data.uf || ''}
-                                    <br>
-                                    CEP: ${formatCep(data.cep) || 'Não informado'}
-                                </span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-map-marker-alt"></i>
+                            <div><span class="data-label">Endereço:</span><span class="data-value">
+                                ${data.descricao_tipo_de_logradouro || ''} ${data.logradouro || ''}, ${data.numero || 'S/N'}
+                                ${data.complemento ? ' - ' + data.complemento : ''}<br>
+                                ${data.bairro || ''} - ${data.municipio || ''} / ${data.uf || ''}<br>
+                                CEP: ${formatCep(data.cep) || 'Não informado'}
+                            </span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-briefcase"></i>
-                            <div>
-                                <span class="data-label">Atividade Principal:</span>
-                                <span class="data-value">${data.cnae_fiscal_descricao || 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-briefcase"></i>
+                            <div><span class="data-label">Atividade Principal:</span><span class="data-value">${data.cnae_fiscal_descricao || 'Não informado'}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-phone"></i>
-                            <div>
-                                <span class="data-label">Telefone:</span>
-                                <span class="data-value">${formatPhone(data.ddd_telefone_1) || 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-phone"></i>
+                            <div><span class="data-label">Telefone:</span><span class="data-value">${formatPhone(data.ddd_telefone_1) || 'Não informado'}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-envelope"></i>
-                            <div>
-                                <span class="data-label">Email:</span>
-                                <span class="data-value">${data.email || 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-envelope"></i>
+                            <div><span class="data-label">Email:</span><span class="data-value">${data.email || 'Não informado'}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-balance-scale"></i>
-                            <div>
-                                <span class="data-label">Natureza Jurídica:</span>
-                                <span class="data-value">${data.natureza_juridica || 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-balance-scale"></i>
+                            <div><span class="data-label">Natureza Jurídica:</span><span class="data-value">${data.natureza_juridica || 'Não informado'}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-dollar-sign"></i>
-                            <div>
-                                <span class="data-label">Capital Social:</span>
-                                <span class="data-value">${data.capital_social ? formatCurrency(data.capital_social) : 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-dollar-sign"></i>
+                            <div><span class="data-label">Capital Social:</span><span class="data-value">${data.capital_social ? formatCurrency(data.capital_social) : 'Não informado'}</span></div>
                         </div>
                     </div>
                 `;
-
                 cnpjContent.innerHTML = html;
                 addPrintButton(cnpjContent, 'CNPJ');
             }
 
-            // CEP Search
+            // CEP
             const cepInput = document.getElementById('cep-input');
             const searchCepBtn = document.getElementById('search-cep');
             const cepLoading = document.getElementById('cep-loading');
             const cepContent = document.getElementById('cep-content');
 
-            searchCepBtn.addEventListener('click', () => {
-                searchCep();
-            });
-
+            searchCepBtn.addEventListener('click', () => { searchCep(); });
             cepInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault(); // Prevent default form submission
-                    searchCep();
-                }
+                if (e.key === 'Enter') { e.preventDefault(); searchCep(); }
             });
 
             function searchCep() {
-                const cep = cepInput.value.replace(/[^\d]/g, '');
-
+                const cep = cepInput.value.replace(/\D/g, '');
                 if (cep.length !== 8) {
                     cepContent.innerHTML = `<div class="error-message">
                         <i class="fas fa-exclamation-circle"></i>
                         CEP inválido. Digite os 8 dígitos do CEP.
                     </div>`;
-                     addPrintButton(cepContent, 'CEP'); // Add print button even on error
+                    addPrintButton(cepContent, 'CEP');
                     return;
                 }
-
-                // Show loading
                 cepContent.innerHTML = '';
                 cepLoading.style.display = 'flex';
-
-                // Fetch data
                 fetch(`${API_BASE_URL}/cep/v1/${cep}`)
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error('CEP não encontrado');
-                        }
+                        if (!response.ok) throw new Error('CEP não encontrado');
                         return response.json();
                     })
                     .then(data => {
@@ -767,99 +709,53 @@
                             <i class="fas fa-exclamation-circle"></i>
                             ${error.message}
                         </div>`;
-                         addPrintButton(cepContent, 'CEP'); // Add print button even on error
+                        addPrintButton(cepContent, 'CEP');
                     });
             }
-
             function displayCepData(data) {
                 const html = `
                     <div class="data-card">
-                        <div class="data-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <div>
-                                <span class="data-label">CEP:</span>
-                                <span class="data-value">${formatCep(data.cep)}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-map-marker-alt"></i>
+                            <div><span class="data-label">CEP:</span><span class="data-value">${formatCep(data.cep)}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-road"></i>
-                            <div>
-                                <span class="data-label">Logradouro:</span>
-                                <span class="data-value">${data.street || 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-road"></i>
+                            <div><span class="data-label">Logradouro:</span><span class="data-value">${data.street || 'Não informado'}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-map"></i>
-                            <div>
-                                <span class="data-label">Bairro:</span>
-                                <span class="data-value">${data.neighborhood || 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-map"></i>
+                            <div><span class="data-label">Bairro:</span><span class="data-value">${data.neighborhood || 'Não informado'}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-city"></i>
-                            <div>
-                                <span class="data-label">Cidade:</span>
-                                <span class="data-value">${data.city || 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-city"></i>
+                            <div><span class="data-label">Cidade:</span><span class="data-value">${data.city || 'Não informado'}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-flag"></i>
-                            <div>
-                                <span class="data-label">Estado:</span>
-                                <span class="data-value">${data.state || 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-flag"></i>
+                            <div><span class="data-label">Estado:</span><span class="data-value">${data.state || 'Não informado'}</span></div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-info-circle"></i>
-                            <div>
-                                <span class="data-label">Serviço:</span>
-                                <span class="data-value">${data.service || 'Não informado'}</span>
-                            </div>
+                        <div class="data-item"><i class="fas fa-info-circle"></i>
+                            <div><span class="data-label">Serviço:</span><span class="data-value">${data.service || 'Não informado'}</span></div>
                         </div>
                     </div>
                 `;
-
                 cepContent.innerHTML = html;
                 addPrintButton(cepContent, 'CEP');
             }
 
-            // Banks Search
+            // Banks
             const bankInput = document.getElementById('bank-input');
             const searchBanksBtn = document.getElementById('search-banks');
             const banksLoading = document.getElementById('banks-loading');
             const banksContent = document.getElementById('banks-content');
 
-            searchBanksBtn.addEventListener('click', () => {
-                searchBanks();
-            });
-
-            bankInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault(); // Prevent default form submission
-                    searchBanks();
-                }
-            });
+            searchBanksBtn.addEventListener('click', () => { searchBanks(); });
+            bankInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); searchBanks(); } });
 
             function searchBanks() {
                 const code = bankInput.value.trim();
-
-                // Show loading
                 banksContent.innerHTML = '';
                 banksLoading.style.display = 'flex';
-
-                // Fetch data - either all banks or a specific one
                 const url = code ? `${API_BASE_URL}/banks/v1/${code}` : `${API_BASE_URL}/banks/v1`;
-
                 fetch(url)
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Banco não encontrado');
-                        }
+                        if (!response.ok) throw new Error('Banco não encontrado');
                         return response.json();
                     })
                     .then(data => {
@@ -872,46 +768,28 @@
                             <i class="fas fa-exclamation-circle"></i>
                             ${error.message}
                         </div>`;
-                        addPrintButton(banksContent, 'Bancos'); // Add print button even on error
+                        addPrintButton(banksContent, 'Bancos');
                     });
             }
-
             function displayBanksData(data, isSpecificBank) {
-                // If it's a specific bank (object) vs all banks (array)
-                let html;
-                let tableHtml;
+                let html = '';
                 if (isSpecificBank) {
                     html = `
                         <div class="data-card">
-                            <div class="data-item">
-                                <i class="fas fa-university"></i>
-                                <div>
-                                    <span class="data-label">Nome:</span>
-                                    <span class="data-value">${data.fullName || data.name || 'Não informado'}</span>
-                                </div>
+                            <div class="data-item"><i class="fas fa-university"></i>
+                                <div><span class="data-label">Nome:</span><span class="data-value">${data.fullName || data.name || 'Não informado'}</span></div>
                             </div>
-
-                            <div class="data-item">
-                                <i class="fas fa-hashtag"></i>
-                                <div>
-                                    <span class="data-label">Código:</span>
-                                    <span class="data-value">${data.code || 'Não informado'}</span>
-                                </div>
+                            <div class="data-item"><i class="fas fa-hashtag"></i>
+                                <div><span class="data-label">Código:</span><span class="data-value">${data.code || 'Não informado'}</span></div>
                             </div>
-
-                            <div class="data-item">
-                                <i class="fas fa-id-card"></i>
-                                <div>
-                                    <span class="data-label">ISPB:</span>
-                                    <span class="data-value">${data.ispb || 'Não informado'}</span>
-                                </div>
+                            <div class="data-item"><i class="fas fa-id-card"></i>
+                                <div><span class="data-label">ISPB:</span><span class="data-value">${data.ispb || 'Não informado'}</span></div>
                             </div>
                         </div>
                     `;
-                     banksContent.innerHTML = html;
+                    banksContent.innerHTML = html;
                 } else {
-                    // For all banks, create a table
-                    tableHtml = `
+                    let tableHtml = `
                         <table class="data-table">
                             <thead>
                                 <tr>
@@ -922,7 +800,6 @@
                             </thead>
                             <tbody>
                     `;
-
                     data.forEach(bank => {
                         tableHtml += `
                             <tr>
@@ -932,56 +809,36 @@
                             </tr>
                         `;
                     });
-
-                    tableHtml += `
-                            </tbody>
-                        </table>
-                    `;
+                    tableHtml += '</tbody></table>';
                     banksContent.innerHTML = tableHtml;
                 }
-
-
                 addPrintButton(banksContent, 'Bancos');
             }
 
-            // DDD Search
+            // DDD
             const dddInput = document.getElementById('ddd-input');
             const searchDddBtn = document.getElementById('search-ddd');
             const dddLoading = document.getElementById('ddd-loading');
             const dddContent = document.getElementById('ddd-content');
 
-            searchDddBtn.addEventListener('click', () => {
-                searchDdd();
-            });
-
-            dddInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault(); // Prevent default form submission
-                    searchDdd();
-                }
-            });
+            searchDddBtn.addEventListener('click', () => { searchDdd(); });
+            dddInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); searchDdd(); } });
 
             function searchDdd() {
                 const ddd = dddInput.value.trim();
-
                 if (ddd.length !== 2 || isNaN(ddd)) {
                     dddContent.innerHTML = `<div class="error-message">
                         <i class="fas fa-exclamation-circle"></i>
                         DDD inválido. Digite os 2 dígitos do DDD.
                     </div>`;
+                    addPrintButton(dddContent, 'DDD');
                     return;
                 }
-
-                // Show loading
                 dddContent.innerHTML = '';
                 dddLoading.style.display = 'flex';
-
-                // Fetch data
                 fetch(`${API_BASE_URL}/ddd/v1/${ddd}`)
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error('DDD não encontrado');
-                        }
+                        if (!response.ok) throw new Error('DDD não encontrado');
                         return response.json();
                     })
                     .then(data => {
@@ -994,80 +851,69 @@
                             <i class="fas fa-exclamation-circle"></i>
                             ${error.message}
                         </div>`;
+                        addPrintButton(dddContent, 'DDD');
                     });
             }
-
             function displayDddData(data) {
+                let citiesHtml = '';
+                if (data.cities && Array.isArray(data.cities) && data.cities.length > 0) {
+                    citiesHtml = data.cities.map(city => `<li>${city}</li>`).join('');
+                } else {
+                    citiesHtml = '<li>Nenhuma cidade encontrada</li>';
+                }
                 const html = `
                     <div class="data-card">
-                        <div class="data-item">
-                            <i class="fas fa-phone"></i>
+                        <div class="data-item"><i class="fas fa-phone"></i>
                             <div>
                                 <span class="data-label">DDD:</span>
-                                <span class="data-value">${formatDdd(data.ddd)}</span>
+                                <span class="data-value">${dddInput.value}</span>
                             </div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-map-marker-alt"></i>
+                        <div class="data-item"><i class="fas fa-map"></i>
                             <div>
-                                <span class="data-label">Região:</span>
-                                <span class="data-value">${data.regiao || 'Não informado'}</span>
+                                <span class="data-label">Estado:</span>
+                                <span class="data-value">${data.state || 'Não informado'}</span>
                             </div>
                         </div>
-
-                        <div class="data-item">
-                            <i class="fas fa-city"></i>
+                        <div class="data-item"><i class="fas fa-city"></i>
                             <div>
-                                <span class="data-label">Cidade:</span>
-                                <span class="data-value">${data.cidade || 'Não informado'}</span>
+                                <span class="data-label">Cidades:</span>
+                                <span class="data-value">
+                                    <ul style="list-style-type: none; padding-left: 0; margin:0;">${citiesHtml}</ul>
+                                </span>
                             </div>
                         </div>
                     </div>
                 `;
-
                 dddContent.innerHTML = html;
                 addPrintButton(dddContent, 'DDD');
             }
 
-            // Feriados Search
+            // Feriados
             const feriadosInput = document.getElementById('feriados-input');
             const searchFeriadosBtn = document.getElementById('search-feriados');
             const feriadosLoading = document.getElementById('feriados-loading');
             const feriadosContent = document.getElementById('feriados-content');
+            feriadosInput.value = new Date().getFullYear();
 
-            searchFeriadosBtn.addEventListener('click', () => {
-                searchFeriados();
-            });
-
-            feriadosInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault(); // Prevent default form submission
-                    searchFeriados();
-                }
-            });
+            searchFeriadosBtn.addEventListener('click', () => { searchFeriados(); });
+            feriadosInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); searchFeriados(); } });
 
             function searchFeriados() {
                 const ano = feriadosInput.value.trim();
-
                 if (isNaN(ano) || ano.length !== 4) {
                     feriadosContent.innerHTML = `<div class="error-message">
                         <i class="fas fa-exclamation-circle"></i>
                         Ano inválido. Digite os 4 dígitos do ano.
                     </div>`;
+                    addPrintButton(feriadosContent, 'Feriados');
                     return;
                 }
-
-                // Show loading
                 feriadosContent.innerHTML = '';
                 feriadosLoading.style.display = 'flex';
-
-                // Fetch data
                 fetch(`${API_BASE_URL}/feriados/v1/${ano}`)
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Feriados não encontrados');
-                        }
+                        if (!response.ok) throw new Error('Feriados não encontrados');
                         return response.json();
                     })
                     .then(data => {
@@ -1080,77 +926,97 @@
                             <i class="fas fa-exclamation-circle"></i>
                             ${error.message}
                         </div>`;
+                        addPrintButton(feriadosContent, 'Feriados');
                     });
             }
-
             function displayFeriadosData(data) {
-                const html = `
-                    <div class="data-card">
-                        ${data.map(feriado => `
-                            <div class="data-item">
-                                <i class="fas fa-calendar"></i>
-                                <div>
-                                    <span class="data-label">Data:</span>
-                                    <span class="data-value">${formatDate(feriado.date)}</span>
-                                </div>
-                            </div>
-
-                            <div class="data-item">
-                                <i class="fas fa-info-circle"></i>
-                                <div>
-                                    <span class="data-label">Feriado:</span>
-                                    <span class="data-value">${feriado.name}</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-
-                feriadosContent.innerHTML = html;
-                addPrintButton(feriadosContent, 'Feriados');
+                if (!data || !data.length) {
+                    feriadosContent.innerHTML = `<div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Nenhum feriado encontrado para este ano.
+                    </div>`;
+                    addPrintButton(feriadosContent, 'Feriados');
+                } else {
+                    let tableHtml = `
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Feriado</th>
+                                    <th>Tipo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    data.forEach(feriado => {
+                        let type = 'Nacional';
+                        if (feriado.type === 'optional') type = 'Opcional';
+                        tableHtml += `
+                            <tr>
+                                <td>${formatDate(feriado.date)}</td>
+                                <td>${feriado.name}</td>
+                                <td>${type}</td>
+                            </tr>
+                        `;
+                    });
+                    tableHtml += '</tbody></table>';
+                    feriadosContent.innerHTML = tableHtml;
+                    addPrintButton(feriadosContent, 'Feriados');
+                }
             }
 
+            // Formatters
             function formatCnpj(cnpj) {
                 if (!cnpj) return '';
                 return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5, 8)}/${cnpj.slice(8, 12)}-${cnpj.slice(12)}`;
             }
-
             function formatCep(cep) {
                 if (!cep) return '';
                 return `${cep.slice(0, 5)}-${cep.slice(5)}`;
             }
-
-            function formatPhone(ddd) {
-                if (!ddd) return '';
-                return `(${ddd})`;
+            function formatPhone(phone) {
+                if (!phone) return 'Não informado';
+                let str = phone.replace(/\D/g, '');
+                if (str.length === 10)
+                    return `(${str.slice(0,2)}) ${str.slice(2,6)}-${str.slice(6)}`;
+                if (str.length === 11)
+                    return `(${str.slice(0,2)}) ${str.slice(2,7)}-${str.slice(7)}`;
+                return phone;
             }
-
-            function formatDdd(ddd) {
-                if (!ddd) return '';
-                return `+${ddd}`;
-            }
-
             function formatDate(date) {
                 if (!date) return '';
-                const [year, month, day] = date.split('-');
-                return `${day}/${month}/${year}`;
+                if (date.length === 10 && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                    return `${date.slice(8,10)}/${date.slice(5,7)}/${date.slice(0,4)}`;
+                } else {
+                    // fallback for ISO or other formats
+                    try {
+                        const d = new Date(date);
+                        if (!isNaN(d.getTime())) {
+                            return d.toLocaleDateString('pt-BR');
+                        }
+                        return date;
+                    } catch { return date; }
+                }
             }
-
             function formatCurrency(value) {
                 if (!value) return '';
-                return `R$ ${value.toFixed(2).replace('.', ',')}`;
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(typeof value === "string" ? parseFloat(value) : value);
             }
-
+            // Print Button w/ Date
             function addPrintButton(element, label) {
+                // Remove any existing one
+                const oldBtn = element.querySelector('.print-button');
+                if (oldBtn) oldBtn.remove();
+                // Only print if there's some result content
+                if (!element.innerText.trim()) return;
                 const printButton = document.createElement('button');
                 printButton.classList.add('print-button');
-                printButton.innerHTML = `<i class="fas fa-print"></i> Imprimir ${label}`;
+                printButton.innerHTML = `<i class="fas fa-print"></i> Imprimir ${label || ""}`;
                 printButton.addEventListener('click', () => {
-                    const printContent = element.innerHTML;
-                    const printWindow = window.open('', '_blank');
-                    printWindow.document.write(printContent);
-                    printWindow.print();
-                    printWindow.close();
+                    const now = new Date();
+                    const formattedDate = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
+                    element.setAttribute('data-print-date', formattedDate);
+                    setTimeout(() => window.print(), 50);
                 });
                 element.appendChild(printButton);
             }
