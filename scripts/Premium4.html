@@ -154,22 +154,6 @@
             transform: translateY(-2px);
         }
 
-        .limited-time {
-            color: #fff;
-            font-size: clamp(0.9rem, 2vw, 1rem);
-            font-weight: bold;
-            text-align: center;
-            margin: 1rem 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            background: var(--secondary-color);
-            padding: 0.6rem 1.2rem;
-            border-radius: var(--radius);
-            animation: pulse 2s infinite;
-            box-shadow: var(--shadow);
-        }
-
         .plans {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -212,7 +196,6 @@
             display: inline-block;
         }
 
-        /* Removed .plan-card h3::after to eliminate the underline */
         .price-container {
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             padding: 0.4rem;
@@ -247,7 +230,7 @@
             font-weight: 600;
             transition: var(--transition);
             cursor: pointer;
-            margin-top: 0.3rem; /* Reduced from 0.6rem */
+            margin-top: 0.3rem;
             border: none;
             box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
             font-size: 0.9rem;
@@ -409,7 +392,6 @@
             box-shadow: 0 5px 15px rgba(247, 37, 133, 0.4);
         }
 
-        /* Media Queries */
         @media (max-width: 1280px) {
             .plans {
                 grid-template-columns: repeat(4, 1fr);
@@ -431,7 +413,7 @@
             .plan-button {
                 padding: 0.5rem 1rem;
                 font-size: 0.8rem;
-                margin-top: 0.2rem; /* Reduced further for smaller screens */
+                margin-top: 0.2rem;
             }
             .disclaimer {
                 margin-top: 0.4rem;
@@ -468,7 +450,6 @@
             }
         }
 
-        /* Animations */
         @keyframes slideDown {
             from {
                 opacity: 0;
@@ -478,12 +459,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -533,15 +508,11 @@
             </div>
         </div>
 
-        <div id="limitedTimeMessage" style="display: none;" class="limited-time">
-            Cupom por tempo limitado!
-        </div>
-
         <div class="disclaimer">
             <h2>ATENÇÃO ( LEIA ANTES )</h2>
             <p>1 - VÁLIDO PARA 1 COMPUTADOR.</p>
             <p>2 - PERDE AO FORMATAR O COMPUTADOR.</p>
-			<p>(COMPRE POUCO TEMPO PARA NÃO SE ARRISCAR)</p>
+            <p>(COMPRE POUCO TEMPO PARA NÃO SE ARRISCAR)</p>
         </div>
     </section>
 
@@ -597,27 +568,7 @@
         }
 
         function applyCoupon() {
-            const couponInput = document.getElementById('couponInput');
-            const plansContainer = document.getElementById('plansContainer');
-            const limitedTimeMessage = document.getElementById('limitedTimeMessage');
-            const couponValue = couponInput.value.toLowerCase().trim();
-
-            if (couponValue === 'smartprint' || couponValue === 'encadernação solidária' || couponValue === 'encadernacao solidaria') {
-                plansContainer.innerHTML = `
-                    <div class="plan-card">
-                        <h3>3 Meses</h3>
-                        <div class="price-container">
-                            <div class="original-price">R$27,00</div>
-                            <div class="plan-price">R$15,00</div>
-                        </div>
-                        <div class="plan-button" onclick="showQRCode('3 Meses - Cupom', 'R$15,00', 'https://cloudgraficaweb.github.io/CGVendas/scripts/Pix15.jpeg')">Escolher Agora</div>
-                    </div>
-                `;
-                limitedTimeMessage.style.display = 'block';
-                document.getElementById('couponContainer').classList.remove('active');
-            } else {
-                alert('Cupom inválido!');
-            }
+            alert('Cupom inválido!');
         }
 
         function showQRCode(plan, price, qrCodeUrl) {
